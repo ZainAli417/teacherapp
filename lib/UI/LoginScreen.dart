@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ollapp/Navbar.dart';
 import 'ForgetPasswordScreen.dart';
 import 'TeacherScreen.dart';
 
@@ -170,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen>
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => TeacherScreen()),
+                                    builder: (context) => navbar()),
                               );
                             }
                           },

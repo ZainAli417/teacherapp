@@ -19,6 +19,7 @@ class ScheduleProvider extends ChangeNotifier {
       // Tuesday
       [
         {"time": "11:00 AM - 2:00 PM", "subject": "Biology", "class": "10 - A (Science)", "icon": "assets/images/bio.svg"},
+
       ],
       // Wednesday
       [],

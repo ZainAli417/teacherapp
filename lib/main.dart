@@ -45,7 +45,7 @@ class TeacherApp extends StatelessWidget {
           '/teacher': (context) => TeacherScreen(),
           '/profile': (context) => ProfileScreen(),
           '/schedule': (context) =>ScheduleScreen (),
-          '/settings': (context) =>SettingsScreen (),
+          '/settings': (context) => SettingsScreen (),
 
 
 

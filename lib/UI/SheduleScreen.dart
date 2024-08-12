@@ -14,28 +14,28 @@ class ScheduleScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(90), // Set the height
-          child: AppBar(
-            backgroundColor: Color(0xFF125390),
-            title: Text(
-              "Schedule",
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-              ),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(90), // Set the height
+        child: AppBar(
+          backgroundColor: Color(0xFF125390),
+          title: Text(
+            "Schedule",
+            style: GoogleFonts.poppins(
+              fontSize: 24,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
             ),
-            centerTitle: true,
-            elevation: 0,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-              ),
+          ),
+          centerTitle: true,
+          elevation: 0,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
             ),
           ),
         ),
+      ),
       body: Column(
         children: [
           _buildDaysList(context, scheduleProvider), // Moved below the AppBar
@@ -89,8 +89,8 @@ class ScheduleScreen extends StatelessWidget {
       return Center(
         child: SvgPicture.asset(
           'assets/images/fileNotFound.svg', // Path to your 'notfound.svg' image
-        //  width: 150,
-         //  height: 150,
+          //  width: 150,
+          //  height: 150,
         ),
       );
     }

@@ -31,7 +31,6 @@ class TeacherApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ScheduleProvider()),
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
-
       ],
       child: MaterialApp(
         title: 'Teacher App',

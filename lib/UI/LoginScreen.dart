@@ -184,6 +184,7 @@ class _LoginScreenState extends State<LoginScreen>
                             ),
                           ),
 
+
                           child: Text(
                             'Sign in',
                             style: GoogleFonts.poppins(

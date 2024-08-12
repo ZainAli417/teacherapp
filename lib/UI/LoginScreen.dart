@@ -183,6 +183,7 @@ class _LoginScreenState extends State<LoginScreen>
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
+
                           child: Text(
                             'Sign in',
                             style: GoogleFonts.poppins(

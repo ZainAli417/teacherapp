@@ -158,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen>
                             'Forgot password?',
                             style: GoogleFonts.poppins(
                               fontSize: 14,
-                              color: Color(0xFF0C3F70),
+                              color: Color(0xFF03315B),
                             ),
                           ),
                         ),
@@ -176,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen>
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF0C3F70),
+                            backgroundColor: Color(0xFF03315B),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 90, vertical: 15),
                             shape: RoundedRectangleBorder(

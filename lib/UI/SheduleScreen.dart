@@ -17,7 +17,17 @@ class ScheduleScreen extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(90), // Set the height
         child: AppBar(
-          backgroundColor: Color(0xFF125390),
+          backgroundColor: Color(0xFF044B89),
+          leading: IconButton(
+            icon: SvgPicture.asset(
+              'assets/images/back_icon.svg',
+              color: Color(0xFF044B89),
+            ),
+            onPressed: () {
+
+            },
+          ),
+
           title: Text(
             "Schedule",
             style: GoogleFonts.poppins(
@@ -65,14 +75,14 @@ class ScheduleScreen extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 5, vertical: 8),
               decoration: BoxDecoration(
-                color: isSelected ?const Color(0xFF125390): Colors.white  ,
+                color: isSelected ?const Color(0xFF044B89): Colors.white  ,
 
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Text(
                 days[index],
                 style: GoogleFonts.poppins(
-                  color: isSelected ? Colors.white:Color(0xFF125390)  ,
+                  color: isSelected ? Colors.white:Color(0xFF044B89)  ,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -99,7 +109,7 @@ class ScheduleScreen extends StatelessWidget {
       itemCount: scheduleList.length,
       itemBuilder: (context, index) {
         final scheduleItem = scheduleList[index];
-        final randomColor = Color(0xFF125390); // Generate a random color
+        final randomColor = Color(0xFF044B89); // Generate a random color
 
         return Card(
           color: Colors.white,

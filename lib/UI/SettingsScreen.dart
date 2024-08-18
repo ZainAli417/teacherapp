@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ollapp/UI/LoginScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -46,7 +47,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(90), // Set the height
           child: AppBar(
-            backgroundColor: const Color(0xFF125390),
+            leading: IconButton(
+              icon: SvgPicture.asset(
+                'assets/images/back_icon.svg',
+                color: Color(0xFF044B89),
+              ),
+              onPressed: () {
+
+
+              },
+            ),
+            backgroundColor: const Color(0xFF044B89),
             title: Text(
               "Settings",
               style: GoogleFonts.poppins(
@@ -56,7 +67,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             centerTitle: true,
-            elevation: 0,
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(30),
@@ -86,7 +96,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildSettingsListItem(Map<String, String> item, Animation<double> animation) {
+  Widget _buildSettingsListItem(
+      Map<String, String> item, Animation<double> animation) {
     IconData iconData;
 
     switch (item['icon']) {
@@ -134,14 +145,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
               width: 40,
               height: 40,
               decoration: const BoxDecoration(
-                color: Color(0xFF125390), // Blue circular background
+                color: Color(0xFF044B89), // Blue circular background
                 shape: BoxShape.circle,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Icon(
                   iconData,
-                  color: Colors.white, // Ensure the icon is white for visibility
+                  color:
+                      Colors.white, // Ensure the icon is white for visibility
                 ),
               ),
             ),
@@ -187,7 +199,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             onPressed: () {
-              // Handle logout logic
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()));
             },
           ),
           const SizedBox(height: 8),

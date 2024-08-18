@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ollapp/Sub_Screens/assingment_screen.dart';
 import 'package:provider/provider.dart';
 
+import '../Sub_Screens/create_assignment_screen.dart';
+import '../Sub_Screens/class_sub_screen.dart';
 import '../providers/teacher_provider.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
@@ -29,7 +32,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
               Container(
                 height: 200,
                 decoration: const BoxDecoration(
-                  color: Color(0xFF125390),
+                  color: Color(0xFF044B89),
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(30),
                     bottomRight: Radius.circular(30),
@@ -124,28 +127,47 @@ class _TeacherScreenState extends State<TeacherScreen> {
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 5,
                           physics: NeverScrollableScrollPhysics(),
-                          children: const [
+                          children: [
                             ClassCard(
                               title: '9 - A Science',
                               subtitle: 'Islamabad',
                               color: Colors.blueAccent,
                               height: 60.0,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ClassSheet()),
+                                );
+                              },
                             ),
                             ClassCard(
                               title: '8 - A Medical',
                               subtitle: 'Rawalpindi',
                               color: Colors.redAccent,
                               height: 60.0,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ClassSheet()),
+                                );
+                              },
                             ),
                             ClassCard(
                               title: '10 - A Arts',
                               subtitle: 'Lahore',
                               color: Colors.teal,
                               height: 60.0,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ClassSheet()),
+                                );
+                              },
                             ),
-                            // Add more cards as needed
+                            // Add more cards with their respective bottom sheets
                           ],
                         ),
+
                       ],
                     ),
                   ),
@@ -174,7 +196,13 @@ class _TeacherScreenState extends State<TeacherScreen> {
                             ),
                           ),
                           title: 'Assignments',
-                          onPressed: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const AssignmentScreen()),
+                            );
+
+                          },
                         ),
                         CapsuleListItem(
                           icon: Padding(
@@ -186,7 +214,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                             ),
                           ),
                           title: 'Announcements',
-                          onPressed: () {},
+                          onTap: () {},
                         ),
                         CapsuleListItem(
                           icon: Padding(
@@ -198,7 +226,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                             ),
                           ),
                           title: 'Lessons',
-                          onPressed: () {},
+                          onTap: () {},
                         ),
                         CapsuleListItem(
                           icon: Padding(
@@ -210,7 +238,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                             ),
                           ),
                           title: 'Topics',
-                          onPressed: () {},
+                          onTap: () {},
                         ),
                         CapsuleListItem(
                           icon: Padding(
@@ -222,7 +250,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                             ),
                           ),
                           title: 'Holidays',
-                          onPressed: () {},
+                          onTap: () {},
                         ),
                         CapsuleListItem(
                           icon: Padding(
@@ -234,7 +262,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                             ),
                           ),
                           title: 'Exams',
-                          onPressed: () {},
+                          onTap: () {},
                         ),
                         CapsuleListItem(
                           icon: SvgPicture.asset(
@@ -243,11 +271,13 @@ class _TeacherScreenState extends State<TeacherScreen> {
                             height: 44,
                           ),
                           title: 'Add Results',
-                          onPressed: () {},
+                          onTap: () {},
                         ),
                       ],
                     ),
                   ),
+
+
                 ],
               ),
             ),
@@ -264,18 +294,22 @@ class ClassCard extends StatelessWidget {
   final String subtitle;
   final Color color;
   final double height;
+  final VoidCallback onTap; // Added callback
 
   const ClassCard(
       {Key? key,
         required this.title,
         required this.subtitle,
         required this.color,
+        required this.onTap, // Added this line
         this.height = 80.0})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+        onTap: onTap,
+        child: Container(
       height: height,
       decoration: BoxDecoration(
         color: color,
@@ -332,59 +366,62 @@ class ClassCard extends StatelessWidget {
           ),
         ],
       ),
+        ),
     );
   }
 }
 
-// CapsuleListItem Widget
 class CapsuleListItem extends StatelessWidget {
   final Widget icon;
   final String title;
-  final VoidCallback onPressed;
+  final VoidCallback onTap;
 
   const CapsuleListItem({
     Key? key,
     required this.icon,
     required this.title,
-    required this.onPressed,
+    required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        height: 80,
-        width: 400,
-        margin: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.black12),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment:
-          MainAxisAlignment.spaceAround, // Center horizontally
-          children: [
-            icon, // Icon
-            const SizedBox(width: 1), // Add some space
-            Text(
-              title,
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
+    return GestureDetector(
+      onTap: onTap,
+      child: Center(
+        child: Container(
+          height: 80,
+          width: 400,
+          margin: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.black12),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment:
+            MainAxisAlignment.spaceAround, // Center horizontally
+            children: [
+              icon, // Icon
+              const SizedBox(width: 1), // Add some space
+              Text(
+                title,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            const SizedBox(width: 1), // Add some space
-            const CircleAvatar(
-              backgroundColor: Colors.black,
-              radius: 16,
-              child: Icon(
-                Icons.arrow_forward,
-                color: Colors.white,
-                size: 20,
+              const SizedBox(width: 1), // Add some space
+              const CircleAvatar(
+                backgroundColor: Colors.black,
+                radius: 16,
+                child: Icon(
+                  Icons.arrow_forward,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

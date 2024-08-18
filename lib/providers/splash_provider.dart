@@ -8,6 +8,7 @@ class SplashProvider with ChangeNotifier {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => LoginScreen()),
+
       );
 
     });

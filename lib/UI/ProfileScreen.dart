@@ -14,21 +14,32 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        toolbarHeight: 130,
+        toolbarHeight: 100,
         backgroundColor: Colors.white,
-        elevation: 0, // Optional: Remove shadow under the AppBar
+        leading: IconButton(
+          icon: SvgPicture.asset(
+            'assets/images/back_icon.svg',
+            color: Color(0xFF044B89),
+          ),
+          onPressed: () {
+
+            },
+        ),
+
         flexibleSpace: Stack(
           children: [
             Container(
               height: 130,
+
               decoration: const BoxDecoration(
-                color: Color(0xFF125390),
+                color: Color(0xFF044B89),
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
                 ),
               ),
             ),
+
             Positioned(
               top: 45,
               left: MediaQuery.of(context).size.width / 2 - 50,
@@ -47,7 +58,7 @@ class ProfileScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16), // Reduce top padding to decrease space
+          padding: const EdgeInsets.fromLTRB(16, 5, 16, 5), // Reduce top padding to decrease space
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -132,7 +143,7 @@ class ProfileScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Color(0xFF125390),
+              color: Color(0xFF044B89),
               borderRadius: BorderRadius.circular(10),
             ),
             child: SvgPicture.asset(

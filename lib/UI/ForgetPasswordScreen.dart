@@ -71,7 +71,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                             Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF0C3F70),
+                            backgroundColor: Color(0xFF03315B),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 15),
                             shape: RoundedRectangleBorder(

@@ -5,7 +5,7 @@ import 'package:ollapp/Sub_Screens/assingment_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../Sub_Screens/create_assignment_screen.dart';
-import '../Sub_Screens/class_sub_screen.dart';
+import '../Sub_Screens/class_screen.dart';
 import '../providers/teacher_provider.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';

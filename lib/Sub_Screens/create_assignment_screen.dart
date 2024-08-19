@@ -5,6 +5,8 @@ import 'package:ollapp/Navbar.dart';
 import '../providers/create_assignment_provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import 'assingment_screen.dart';
+
 
 class Create_Assingment extends StatefulWidget {
   const Create_Assingment({super.key});
@@ -33,7 +35,7 @@ class _Create_AssingmentState extends State<Create_Assingment> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => navbar()),
+                MaterialPageRoute(builder: (context) => AssignmentScreen()),
               );
             },
           ),

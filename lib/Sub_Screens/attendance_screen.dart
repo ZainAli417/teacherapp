@@ -6,7 +6,7 @@ import 'package:intl/intl.dart'; // For formatting the current date
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'class_sub_screen.dart';
+import 'class_screen.dart';
 
 class AttendanceScreen extends StatelessWidget {
   const AttendanceScreen({super.key});

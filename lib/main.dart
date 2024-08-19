@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ollapp/Navbar.dart';
-import 'package:ollapp/Sub_Screens/class_sub_screen.dart';
+import 'package:ollapp/Sub_Screens/class_screen.dart';
 import 'package:ollapp/UI/ProfileScreen.dart';
 import 'package:ollapp/UI/TeacherScreen.dart';
 import 'package:ollapp/providers/create_assignment_provider.dart';

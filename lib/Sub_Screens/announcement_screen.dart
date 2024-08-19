@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ollapp/Navbar.dart';
+import 'package:http/http.dart' as http;
+import 'package:ollapp/Sub_Screens/create_announcement.dart';
+import 'dart:convert';
 
 import '../providers/assingment_provider.dart';
 import '../providers/create_assignment_provider.dart';
@@ -8,15 +11,40 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'create_assignment_screen.dart';
 
-class AssignmentScreen extends StatefulWidget {
-  const AssignmentScreen({super.key});
+class AnnouncementScreen extends StatefulWidget {
+  const AnnouncementScreen({super.key});
 
   @override
-  State<AssignmentScreen> createState() => _AssignmentScreenState();
+  State<AnnouncementScreen> createState() => _AnnouncementScreenState();
 }
 
-class _AssignmentScreenState extends State<AssignmentScreen> {
+class _AnnouncementScreenState extends State<AnnouncementScreen> {
   final AssignmentProvider assignmentProvider = AssignmentProvider();
+  int _attachmentCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    //_fetchAttachmentCount();
+  }
+
+  Future<void> _fetchAttachmentCount() async {
+    try {
+      final response = await http.get(Uri.parse('https://zbmtech.com/attachments'));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          _attachmentCount = data['attachment_count'];
+        });
+      } else {
+        // Handle error, e.g., show an error message
+        print('Error fetching attachment count: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle error, e.g., show an error message
+      print('Error fetching attachment count: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +75,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
             ),
           ),
           title: Text(
-            "Assignments",
+            "Announcements",
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w400,
@@ -152,11 +180,11 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                         ),
                       ),
                       subtitle: Text(
-                        'Due Date: 19-08-2024    09:24 AM', // Set the date and time here
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black54,
+                        _attachmentCount > 0
+                            ? '$_attachmentCount Attachment(s)'
+                            : '0 Attachment(s)',
+                        style: TextStyle(
+                          color: _attachmentCount > 0 ? Colors.blue : Colors.blueAccent,
                         ),
                       ),
                       trailing: Row(
@@ -192,9 +220,9 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Create_Assingment()),
+            MaterialPageRoute(builder: (context) => const Create_Announcement()),
           );
-          },
+        },
         backgroundColor: const Color(0xFF044B89),
         child: SvgPicture.asset(
           'assets/images/FAB.svg', // Replace with your custom SVG

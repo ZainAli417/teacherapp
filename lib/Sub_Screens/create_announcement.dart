@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ollapp/Navbar.dart';
 
-import '../providers/assingment_provider.dart';
 import '../providers/create_assignment_provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'create_assignment_screen.dart';
+import 'assingment_screen.dart';
 
-class AssignmentScreen extends StatefulWidget {
-  const AssignmentScreen({super.key});
+
+class Create_Announcement extends StatefulWidget {
+  const Create_Announcement({super.key});
 
   @override
-  State<AssignmentScreen> createState() => _AssignmentScreenState();
+  State<Create_Announcement> createState() => _Create_AnnouncementState();
 }
 
-class _AssignmentScreenState extends State<AssignmentScreen> {
-  final AssignmentProvider assignmentProvider = AssignmentProvider();
+class _Create_AnnouncementState extends State<Create_Announcement> {
+  final CreateAssingmentProvider assignmentProvider = CreateAssingmentProvider();
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +33,9 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
               color: Colors.white,
             ),
             onPressed: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => navbar()),
+                MaterialPageRoute(builder: (context) => AssignmentScreen()),
               );
             },
           ),
@@ -47,7 +47,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
             ),
           ),
           title: Text(
-            "Assignments",
+            "Create Announcement",
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w400,
@@ -130,77 +130,97 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                 }).toList(),
               ),
               const SizedBox(height: 16),
-              //LIST VIEW CODE
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: 1, // Adjust this value to the number of assignments
-                itemBuilder: (context, index) {
-                  return Card(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      side: BorderSide(color: Colors.grey.withOpacity(0.2), width: 1), // Add a grey border
-                    ),
-                    child: ListTile(
-                      title: Text(
-                        'Drawing', // Set your assignment title here
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                      subtitle: Text(
-                        'Due Date: 19-08-2024    09:24 AM', // Set the date and time here
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black54,
-                        ),
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.edit,
-                              color: Colors.green,
-                              size: 20,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                              size: 20,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+              TextFormField(
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey[100],
+                  hintText: "Assignment Title",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(width: 1, color: Colors.black),
+                  ),
+                ),
+                onChanged: (value) {
+                  assignmentProvider.setAssignmentName(value);
                 },
               ),
+              const SizedBox(height: 16),
+              TextFormField(
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey[100],
+                  hintText: "Announcement Description",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(width: 1, color: Colors.black),
+                  ),
+                ),
+                maxLines: 5,
+                onChanged: (value) {
+                  assignmentProvider.setInstructions(value);
+                },
+              ),
+
+              const SizedBox(height: 20),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black12,
+                    style: BorderStyle.solid,
+                    width: 1,
+                  ),
+                ),
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xFF044B89), // You can change the color as per your requirement
+                      ),
+                      child: const Icon(Icons.add, color: Colors.white,),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Attachment(s)",
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 46),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Handle Create Assignment
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF044B89),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 25,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: Text(
+                    "Add Announcement",
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const Create_Assingment()),
-          );
-          },
-        backgroundColor: const Color(0xFF044B89),
-        child: SvgPicture.asset(
-          'assets/images/FAB.svg', // Replace with your custom SVG
-          width: 45, // Adjust the size as needed
-          height: 45, // Adjust the size as needed
-          color: Colors.white,
         ),
       ),
     );

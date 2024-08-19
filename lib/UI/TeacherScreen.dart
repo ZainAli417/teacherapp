@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ollapp/Sub_Screens/assingment_screen.dart';
+import 'package:ollapp/Sub_Screens/topic_screen.dart';
 import 'package:provider/provider.dart';
-
-import '../Sub_Screens/create_assignment_screen.dart';
+import '../Sub_Screens/announcement_screen.dart';
 import '../Sub_Screens/class_screen.dart';
+import '../Sub_Screens/holiday_screen.dart';
+import '../Sub_Screens/lesson_screen.dart';
+import '../Sub_Screens/results.dart';
 import '../providers/teacher_provider.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
-
 
 class TeacherScreen extends StatefulWidget {
   @override
@@ -17,7 +19,6 @@ class TeacherScreen extends StatefulWidget {
 }
 
 class _TeacherScreenState extends State<TeacherScreen> {
-
   @override
   Widget build(BuildContext context) {
     final teacherProvider = Provider.of<TeacherProvider>(context);
@@ -46,7 +47,8 @@ class _TeacherScreenState extends State<TeacherScreen> {
                   width: 300,
                   height: 300,
                   decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: Colors.white.withOpacity(0.15)),
+                    border: Border.all(
+                        width: 1, color: Colors.white.withOpacity(0.15)),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -58,7 +60,8 @@ class _TeacherScreenState extends State<TeacherScreen> {
                   width: 300,
                   height: 300,
                   decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: Colors.white.withOpacity(0.15)),
+                    border: Border.all(
+                        width: 1, color: Colors.white.withOpacity(0.15)),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -72,11 +75,9 @@ class _TeacherScreenState extends State<TeacherScreen> {
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
                     shape: BoxShape.circle,
-
                   ),
                 ),
               ),
-
               Positioned(
                 top: 90,
                 left: 60,
@@ -136,7 +137,8 @@ class _TeacherScreenState extends State<TeacherScreen> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => ClassSheet()),
+                                  MaterialPageRoute(
+                                      builder: (context) => ClassSheet()),
                                 );
                               },
                             ),
@@ -148,7 +150,8 @@ class _TeacherScreenState extends State<TeacherScreen> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => ClassSheet()),
+                                  MaterialPageRoute(
+                                      builder: (context) => ClassSheet()),
                                 );
                               },
                             ),
@@ -160,14 +163,14 @@ class _TeacherScreenState extends State<TeacherScreen> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => ClassSheet()),
+                                  MaterialPageRoute(
+                                      builder: (context) => ClassSheet()),
                                 );
                               },
                             ),
                             // Add more cards with their respective bottom sheets
                           ],
                         ),
-
                       ],
                     ),
                   ),
@@ -199,9 +202,10 @@ class _TeacherScreenState extends State<TeacherScreen> {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => const AssignmentScreen()),
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AssignmentScreen()),
                             );
-
                           },
                         ),
                         CapsuleListItem(
@@ -214,7 +218,14 @@ class _TeacherScreenState extends State<TeacherScreen> {
                             ),
                           ),
                           title: 'Announcements',
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AnnouncementScreen()),
+                            );
+                          },
                         ),
                         CapsuleListItem(
                           icon: Padding(
@@ -226,7 +237,13 @@ class _TeacherScreenState extends State<TeacherScreen> {
                             ),
                           ),
                           title: 'Lessons',
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const LessonScreen()),
+                            );
+                          },
                         ),
                         CapsuleListItem(
                           icon: Padding(
@@ -238,7 +255,13 @@ class _TeacherScreenState extends State<TeacherScreen> {
                             ),
                           ),
                           title: 'Topics',
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const TopicScreen()),
+                            );
+                          },
                         ),
                         CapsuleListItem(
                           icon: Padding(
@@ -250,7 +273,13 @@ class _TeacherScreenState extends State<TeacherScreen> {
                             ),
                           ),
                           title: 'Holidays',
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HolidayScreen()),
+                            );
+                          },
                         ),
                         CapsuleListItem(
                           icon: Padding(
@@ -262,7 +291,13 @@ class _TeacherScreenState extends State<TeacherScreen> {
                             ),
                           ),
                           title: 'Exams',
-                          onTap: () {},
+                          onTap: () {
+                            /*Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ResultScreen()),
+                            );*/
+                          },
                         ),
                         CapsuleListItem(
                           icon: SvgPicture.asset(
@@ -271,20 +306,24 @@ class _TeacherScreenState extends State<TeacherScreen> {
                             height: 44,
                           ),
                           title: 'Add Results',
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ResultScreen()),
+                            );
+
+                          },
                         ),
                       ],
                     ),
                   ),
-
-
                 ],
               ),
             ),
           ),
         ],
       ),
-
     );
   }
 }
@@ -298,75 +337,75 @@ class ClassCard extends StatelessWidget {
 
   const ClassCard(
       {Key? key,
-        required this.title,
-        required this.subtitle,
-        required this.color,
-        required this.onTap, // Added this line
-        this.height = 80.0})
+      required this.title,
+      required this.subtitle,
+      required this.color,
+      required this.onTap, // Added this line
+      this.height = 80.0})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: onTap,
-        child: Container(
-      height: height,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
+      onTap: onTap,
+      child: Container(
+        height: height,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 1),
-                  Text(
-                    subtitle,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w400,
+                    const SizedBox(height: 1),
+                    Text(
+                      subtitle,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // Circle with arrow at the bottom center
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: CircleAvatar(
-                backgroundColor: Colors.white.withOpacity(0.9),
-                radius: 16,
-                child: Icon(
-                  Icons.arrow_forward_ios_outlined,
-                  color: color,
-                  size: 15,
+                  ],
                 ),
               ),
             ),
-          ),
-        ],
-      ),
+            // Circle with arrow at the bottom center
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: CircleAvatar(
+                  backgroundColor: Colors.white.withOpacity(0.9),
+                  radius: 16,
+                  child: Icon(
+                    Icons.arrow_forward_ios_outlined,
+                    color: color,
+                    size: 15,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
+      ),
     );
   }
 }
@@ -399,7 +438,7 @@ class CapsuleListItem extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment:
-            MainAxisAlignment.spaceAround, // Center horizontally
+                MainAxisAlignment.spaceAround, // Center horizontally
             children: [
               icon, // Icon
               const SizedBox(width: 1), // Add some space
@@ -427,4 +466,3 @@ class CapsuleListItem extends StatelessWidget {
     );
   }
 }
-

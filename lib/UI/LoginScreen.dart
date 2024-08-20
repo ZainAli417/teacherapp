@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ollapp/Navbar.dart';
 import 'ForgetPasswordScreen.dart';
 import 'TeacherScreen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -158,7 +159,9 @@ class _LoginScreenState extends State<LoginScreen>
                             'Forgot password?',
                             style: GoogleFonts.poppins(
                               fontSize: 14,
-                              color: Color(0xFF03315B),
+                              fontWeight: FontWeight.w400,
+
+                              color: Color(0xFF044B89),
                             ),
                           ),
                         ),
@@ -176,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen>
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF03315B),
+                            backgroundColor: Color(0xFF044B89),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 90, vertical: 15),
                             shape: RoundedRectangleBorder(
@@ -207,27 +210,47 @@ class _LoginScreenState extends State<LoginScreen>
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 TextButton(
-                                  onPressed: () {
-                                    // Navigate to terms and conditions
+                                  onPressed: () async {
+                                    const url = 'https://institute.zbmtech.com/'; // replace with your terms and conditions URL
+                                    if (await canLaunch(url)) {
+                                      await launch(url);
+                                    } else {
+                                      throw 'Could not launch $url';
+                                    }
                                   },
                                   child: Text(
                                     'Terms & Condition',
-                                    style: GoogleFonts.poppins(fontSize: 13),
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                      decoration: TextDecoration.underline,
+                                    ),
                                   ),
                                 ),
                                 Text(' & ',
                                     style: GoogleFonts.poppins(fontSize: 13)),
                                 TextButton(
-                                  onPressed: () {
-                                    // Navigate to privacy policy
+                                  onPressed: () async {
+                                    const url = 'https://institute.zbmtech.com/'; // replace with your privacy policy URL
+                                    if (await canLaunch(url)) {
+                                      await launch(url);
+                                    } else {
+                                      throw 'Could not launch $url';
+                                    }
                                   },
                                   child: Text(
                                     'Privacy Policy',
-                                    style: GoogleFonts.poppins(fontSize: 12),
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+
+                                      decoration: TextDecoration.underline,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
+
                           ],
                         ),
                       ),

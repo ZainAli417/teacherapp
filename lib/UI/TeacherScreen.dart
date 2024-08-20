@@ -6,6 +6,7 @@ import 'package:ollapp/Sub_Screens/topic_screen.dart';
 import 'package:provider/provider.dart';
 import '../Sub_Screens/announcement_screen.dart';
 import '../Sub_Screens/class_screen.dart';
+import '../Sub_Screens/exams.dart';
 import '../Sub_Screens/holiday_screen.dart';
 import '../Sub_Screens/lesson_screen.dart';
 import '../Sub_Screens/results.dart';
@@ -292,11 +293,11 @@ class _TeacherScreenState extends State<TeacherScreen> {
                           ),
                           title: 'Exams',
                           onTap: () {
-                            /*Navigator.push(
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ResultScreen()),
-                            );*/
+                                  builder: (context) => ExamsScreen()),
+                            );
                           },
                         ),
                         CapsuleListItem(

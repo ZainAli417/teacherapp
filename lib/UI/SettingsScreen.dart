@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:ollapp/UI/LoginScreen.dart';
-import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:flutter_svg/flutter_svg.dart';
-import '../providers/setting_provider.dart';
+
+import 'package:google_fonts/google_fonts.dart';
+
+import 'package:url_launcher/url_launcher.dart';
+
+import 'LoginScreen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -14,73 +17,87 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+
   final List<Map<String, String>> settingsItems = [
-    {"icon": "translate", "title": "English"},
-    {"icon": "password", "title": "Change password"},
-    {"icon": "privacy_tip", "title": "Privacy Policy"},
-    {"icon": "description", "title": "Terms & Condition"},
-    {"icon": "info", "title": "About Us"},
-    {"icon": "contact_support", "title": "Contact us"},
-    {"icon": "star", "title": "Rate Us"},
-    {"icon": "share", "title": "Share"},
+    {"icon": "translate", "title": "English", "route": "/english"},
+    {
+      "icon": "password",
+      "title": "Change password",
+      "route": "/changepassword"
+    },
+    {
+      "icon": "privacy_tip",
+      "title": "Privacy Policy",
+      "url": "https://institute.zbmtech.com/"
+    },
+    {
+      "icon": "description",
+      "title": "Terms & Condition",
+      "url": "https://institute.zbmtech.com/"
+    },
+    {"icon": "info", "title": "About Us", "url": "https://institute.zbmtech.com/"},
+    {
+      "icon": "contact_support",
+      "title": "Contact us",
+      "url": "https://institute.zbmtech.com/"
+    },
+    {"icon": "star", "title": "Rate Us", "url": "https://institute.zbmtech.com/"},
+    {"icon": "share", "title": "Share", "url": "https://institute.zbmtech.com/"},
   ];
 
   @override
   void initState() {
     super.initState();
+
     _addItems();
   }
 
   void _addItems() async {
     for (int i = 0; i < settingsItems.length; i++) {
       await Future.delayed(Duration(milliseconds: 150));
+
       _listKey.currentState?.insertItem(i);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => SettingsProvider(),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(90), // Set the height
-          child: AppBar(
-            leading: IconButton(
-              icon: SvgPicture.asset(
-                'assets/images/back_icon.svg',
-                color: Color(0xFF044B89),
-              ),
-              onPressed: () {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(90), // Set the height
 
-
-              },
+        child: AppBar(
+          leading: IconButton(
+            icon: SvgPicture.asset(
+              'assets/images/back_icon.svg',
+              color: Color(0xFF044B89),
             ),
-            backgroundColor: const Color(0xFF044B89),
-            title: Text(
-              "Settings",
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-              ),
+            onPressed: () {},
+          ),
+          backgroundColor: const Color(0xFF044B89),
+          title: Text(
+            "Settings",
+            style: GoogleFonts.poppins(
+              fontSize: 24,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
             ),
-            centerTitle: true,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-              ),
+          ),
+          centerTitle: true,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
             ),
           ),
         ),
-        body: Column(
-          children: [
-            Expanded(child: _buildSettingsList()),
-            _buildLogoutButton(),
-          ],
-        ),
+      ),
+      body: Column(
+        children: [
+          Expanded(child: _buildSettingsList()),
+          _buildLogoutButton(),
+        ],
       ),
     );
   }
@@ -103,28 +120,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
     switch (item['icon']) {
       case 'translate':
         iconData = Icons.translate;
+
         break;
+
       case 'password':
         iconData = Icons.password;
+
         break;
+
       case 'privacy_tip':
         iconData = Icons.privacy_tip;
+
         break;
+
       case 'description':
         iconData = Icons.description;
+
         break;
+
       case 'info':
         iconData = Icons.info;
+
         break;
+
       case 'contact_support':
         iconData = Icons.contact_support;
+
         break;
+
       case 'star':
         iconData = Icons.star;
+
         break;
+
       case 'share':
         iconData = Icons.share;
+
         break;
+
       default:
         iconData = Icons.help; // Fallback icon
     }
@@ -137,39 +170,48 @@ class _SettingsScreenState extends State<SettingsScreen> {
         parent: animation,
         curve: Curves.easeInOut,
       )),
-      child: Container(
-        margin: const EdgeInsets.only(top: 16),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                color: Color(0xFF044B89), // Blue circular background
-                shape: BoxShape.circle,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(
-                  iconData,
-                  color:
-                      Colors.white, // Ensure the icon is white for visibility
+      child: GestureDetector(
+        onTap: () async {
+          if (item.containsKey("route")) {
+            Navigator.pushNamed(context, item["route"]!);
+          } else if (item.containsKey("url")) {
+            await launchUrl(Uri.parse(item["url"]!));
+          }
+        },
+        child: Container(
+          margin: const EdgeInsets.only(top: 16),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF044B89), // Blue circular background
+                  shape: BoxShape.circle,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    iconData,
+                    color:
+                        Colors.white, // Ensure the icon is white for visibility
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Text(
-                item['title']!,
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black, // Text color changed to black
+              const SizedBox(width: 20),
+              Expanded(
+                child: Text(
+                  item['title']!,
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black, // Text color changed to black
+                  ),
                 ),
               ),
-            ),
-            const Icon(Icons.chevron_right, color: Colors.black87),
-          ],
+              const Icon(Icons.chevron_right, color: Colors.black87),
+            ],
+          ),
         ),
       ),
     );

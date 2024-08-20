@@ -15,6 +15,7 @@ import 'package:ollapp/providers/attendance_provider.dart';
 import 'package:ollapp/providers/class_sub_screen_provider.dart';
 import 'package:ollapp/providers/announcement_provider.dart';
 import 'package:ollapp/providers/create_lesson_provider.dart';
+import 'package:ollapp/providers/exams_provider.dart';
 import 'package:ollapp/providers/lesson_provider.dart';
 import 'package:ollapp/providers/profile_provider.dart';
 import 'package:ollapp/providers/result_Provider.dart';
@@ -68,6 +69,7 @@ class TeacherApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CreateLessonProvider()),
 
         ChangeNotifierProvider(create: (_) => resultProvider()),
+        ChangeNotifierProvider(create: (_) => ExamsProvider()),
 
       ],
       child: MaterialApp(
@@ -75,7 +77,7 @@ class TeacherApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: navbar(), // Initial screen change to splash for now testing
+        home: SplashScreen(), // Initial screen change to splash for now testing
         routes: {
           '/login': (context) => LoginScreen(),
           '/home': (context) => TeacherScreen(),

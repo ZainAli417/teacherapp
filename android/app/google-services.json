@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "233197671362",
+    "project_id": "hallowed-fin-349908",
+    "storage_bucket": "hallowed-fin-349908.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:233197671362:android:2c16a42dc2005a4aaefc5b",
+        "android_client_info": {
+          "package_name": "com.example.ollapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "233197671362-i7iqphri9m012jrp4vh72sh5v2pamg8v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJYAAWNJVwlTF24C3u6ZmMPD3HsV-rB3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "233197671362-i7iqphri9m012jrp4vh72sh5v2pamg8v.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "233197671362-b6s6v47gq89s9ua0n9efbf4skuveklcp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wrteam.eschool"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

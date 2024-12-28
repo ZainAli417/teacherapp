@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       curve: Curves.easeInOut,
     );
 
-    Provider.of<SplashProvider>(context, listen: false).navigateToLogin(context);
+    Provider.of<SplashProvider>(context, listen: false).navigateToNextScreen(context);
   }
 
   @override

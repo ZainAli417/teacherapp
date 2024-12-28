@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
@@ -14,6 +15,8 @@ import '../providers/teacher_provider.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
+import 'LoginScreen.dart';
+
 class TeacherScreen extends StatefulWidget {
   @override
   _TeacherScreenState createState() => _TeacherScreenState();
@@ -23,7 +26,17 @@ class _TeacherScreenState extends State<TeacherScreen> {
   @override
   Widget build(BuildContext context) {
     final teacherProvider = Provider.of<TeacherProvider>(context);
+    if (FirebaseAuth.instance.currentUser == null) {
 
+      Navigator.pushReplacement(
+
+        context,
+
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+
+      );
+
+    }
     return Scaffold(
       backgroundColor: Colors.white.withOpacity(1),
       body: Column(
@@ -80,8 +93,8 @@ class _TeacherScreenState extends State<TeacherScreen> {
                 ),
               ),
               Positioned(
-                top: 90,
-                left: 60,
+                top: 75,
+                left: 30,
                 child: Row(
                   children: [
                     CircleAvatar(
@@ -89,15 +102,18 @@ class _TeacherScreenState extends State<TeacherScreen> {
                       radius: 30,
                       backgroundImage: NetworkImage(teacherProvider.avatarUrl),
                     ),
-                    SizedBox(width: 10),
+                    SizedBox(width: 20),
                     Text(
                       teacherProvider.teacherName,
                       style: GoogleFonts.poppins(
                         fontSize: 24,
                         color: Colors.white,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
+                    const SizedBox(width: 50),
+
+                    _buildLogoutButton()
                   ],
                 ),
               ),
@@ -327,6 +343,40 @@ class _TeacherScreenState extends State<TeacherScreen> {
       ),
     );
   }
+  Widget _buildLogoutButton() {
+    return Column(
+      children: [
+        ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.black26, // Button color
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+          ),
+          icon:  Icon(Icons.logout_outlined, color: Colors.white),
+          label: Text(
+            "Logout",
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          onPressed: () async {
+            await FirebaseAuth.instance.signOut();
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => LoginScreen()),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+
+
 }
 
 class ClassCard extends StatelessWidget {
@@ -409,6 +459,7 @@ class ClassCard extends StatelessWidget {
       ),
     );
   }
+
 }
 
 class CapsuleListItem extends StatelessWidget {

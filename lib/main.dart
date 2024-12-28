@@ -7,6 +7,7 @@ import 'package:ollapp/Sub_Screens/create_topic.dart';
 import 'package:ollapp/Sub_Screens/lesson_screen.dart';
 import 'package:ollapp/Sub_Screens/topic_screen.dart';
 import 'package:ollapp/UI/ProfileScreen.dart';
+import 'package:ollapp/UI/SignUp.dart';
 import 'package:ollapp/UI/TeacherScreen.dart';
 import 'package:ollapp/providers/assingment_provider.dart';
 import 'package:ollapp/providers/create_announcement_provider.dart';
@@ -21,6 +22,7 @@ import 'package:ollapp/providers/profile_provider.dart';
 import 'package:ollapp/providers/result_Provider.dart';
 import 'package:ollapp/providers/setting_provider.dart';
 import 'package:ollapp/providers/shedule_provider.dart';
+import 'package:ollapp/providers/signup_provider.dart';
 import 'package:ollapp/providers/teacher_provider.dart';
 import 'package:provider/provider.dart';
 import 'Sub_Screens/assingment_screen.dart';
@@ -36,8 +38,11 @@ import 'UI/SplashScreen.dart';
 import 'providers/splash_provider.dart';
 import 'providers/login_provider.dart';
 import 'providers/forget_password_provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(TeacherApp());
 }
 
@@ -48,6 +53,7 @@ class TeacherApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => SplashProvider()),
         ChangeNotifierProvider(create: (_) => LoginProvider()),
+        ChangeNotifierProvider(create: (_) => SignupProvider()),
         ChangeNotifierProvider(create: (_) => ForgotPasswordProvider()),
         ChangeNotifierProvider(create: (_) => TeacherProvider()),
         ChangeNotifierProvider(create: (_) => ScheduleProvider()),
@@ -80,6 +86,7 @@ class TeacherApp extends StatelessWidget {
         home: SplashScreen(), // Initial screen change to splash for now testing
         routes: {
           '/login': (context) => LoginScreen(),
+          '/signup': (context) => SignupScreen(),
           '/home': (context) => TeacherScreen(),
           '/forget_password': (context) => ForgotPasswordScreen(),
           '/teacher': (context) => TeacherScreen(),

@@ -1,31 +1,45 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../models/Teacher_model.dart';
 
 class ProfileProvider with ChangeNotifier {
-  String _avatarUrl = "https://firebasestorage.googleapis.com/v0/b/unisoft-tmp.appspot.com/o/Default%2Fdummy-profile.png?alt=media&token=ebbb29f7-0ab8-4437-b6d5-6b2e4cfeaaf7";
-  final String _teacherName = "Zain Ali";
-  final String _email = "teacher@gmail.com";
-  final String _phoneNumber = "+923196051338";
-  final String _dateOfBirth = "23-05-2003";
-  final String _gender = "Male";
-  final String _qualification = "BS Computer Science";
-  final String _currentAddress = "Islamabad";
-  final String _permanentAddress = "Lahore";
+  TeacherData? _teacherData;
+  bool _isLoading = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  String get avatarUrl => _avatarUrl;
-  String get teacherName => _teacherName;
-  String get email => _email;
-  String get phoneNumber => _phoneNumber;
-  String get dateOfBirth => _dateOfBirth;
-  String get gender => _gender;
-  String get qualification => _qualification;
-  String get currentAddress => _currentAddress;
-  String get permanentAddress => _permanentAddress;
+  TeacherData? get teacherData => _teacherData;
+  bool get isLoading => _isLoading;
 
-  // Function to update the avatar URL
-  void updateAvatarUrl(String url) {
-    _avatarUrl = url;
+  // Fetch teacher data based on the logged-in UID
+  Future<void> fetchTeacherData() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final String loggedInUserUid = _auth.currentUser!.uid;;
+      print("Logged in user UID: $loggedInUserUid");
+
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
+          .collection('Teacher_data')
+          .where('uid', isEqualTo: loggedInUserUid)
+          .limit(1)
+          .get();
+
+      print("Number of documents found: ${querySnapshot.docs.length}");
+
+      if (querySnapshot.docs.isNotEmpty) {
+        _teacherData = TeacherData.fromMap(querySnapshot.docs.first.data());
+        print("Teacher data fetched successfully: ${_teacherData!.teacherName}");
+      } else {
+        print("No teacher data found for the logged-in user.");
+      }
+    } catch (error) {
+      print("Error fetching teacher data: $error");
+    }
+
+    _isLoading = false;
     notifyListeners();
   }
-
-// Other update functions can be added here as needed
 }

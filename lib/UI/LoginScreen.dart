@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ollapp/Navbar.dart';
-import 'ForgetPasswordScreen.dart';
-import 'TeacherScreen.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../providers/login_provider.dart';
+import 'ForgetPasswordScreen.dart';
+import 'SignUp.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -27,14 +28,14 @@ class _LoginScreenState extends State<LoginScreen>
     );
 
     _slideAnimation = Tween<Offset>(
-      begin: Offset(1.0, 0.0), // Start off-screen to the right
-      end: Offset(0.0, 0.0), // End at the original position
+      begin: Offset(1.0, 0.0),
+      end: Offset(0.0, 0.0),
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
 
-    _animationController.forward(); // Start the animation
+    _animationController.forward();
   }
 
   @override
@@ -48,25 +49,19 @@ class _LoginScreenState extends State<LoginScreen>
     return Scaffold(
       body: Stack(
         children: [
-          // Top green banner
           Positioned(
             right: -10,
             child: Align(
               alignment: Alignment.topLeft,
-              child: Image.asset(
-                'assets/images/upper_pattern.png',
-              ),
+              child: Image.asset('assets/images/upper_pattern.png'),
             ),
           ),
-          // Bottom green banner
           Positioned(
             top: 810,
             right: 70,
             child: Align(
               alignment: Alignment.bottomRight,
-              child: Image.asset(
-                'assets/images/lower_pattern.png',
-              ),
+              child: Image.asset('assets/images/lower_pattern.png'),
             ),
           ),
           SlideTransition(
@@ -80,35 +75,38 @@ class _LoginScreenState extends State<LoginScreen>
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      const SizedBox(height: 200),
+                      SizedBox(height: 200),
                       Text(
                         "Let's Sign in",
                         style: GoogleFonts.poppins(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500,
                           color: Colors.black,
                         ),
                       ),
                       SizedBox(height: 8),
-                      const Text(
+                      Text(
                         "Welcome Back,\nYou've been missed!",
                         style: TextStyle(
-                          fontFamily: 'impact',
+                          fontFamily: GoogleFonts.poppins().fontFamily,
                           fontSize: 18,
                           color: Colors.black87,
                         ),
                       ),
-                      SizedBox(height: 40),
+                      SizedBox(height: 30),
                       TextFormField(
+                        controller:
+                        Provider.of<LoginProvider>(context).emailController,
                         decoration: InputDecoration(
                           labelText: 'Email',
+                          hintText: 'johndoe@mail.com',
                           prefixIcon: Icon(Icons.email),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                         validator: (value) {
-                          if (value!.isEmpty) {
+                          if (value == null || value.isEmpty) {
                             return 'Please enter your email';
                           }
                           return null;
@@ -116,9 +114,12 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                       SizedBox(height: 20),
                       TextFormField(
+                        controller: Provider.of<LoginProvider>(context)
+                            .passwordController,
                         obscureText: !_passwordVisible,
                         decoration: InputDecoration(
                           labelText: 'Password',
+                          hintText: '********',
                           prefixIcon: Icon(Icons.lock),
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -137,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                         ),
                         validator: (value) {
-                          if (value!.isEmpty) {
+                          if (value == null || value.isEmpty) {
                             return 'Please enter your password';
                           }
                           return null;
@@ -151,7 +152,6 @@ class _LoginScreenState extends State<LoginScreen>
                             showModalBottomSheet(
                               context: context,
                               isScrollControlled: false,
-
                               builder: (context) => ForgotPasswordScreen(),
                             );
                           },
@@ -160,7 +160,6 @@ class _LoginScreenState extends State<LoginScreen>
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
-
                               color: Color(0xFF044B89),
                             ),
                           ),
@@ -168,33 +167,36 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                       SizedBox(height: 20),
                       Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => navbar()),
-                              );
-                            }
+                        child: Consumer<LoginProvider>(
+                          builder: (context, loginProvider, child) {
+                            return ElevatedButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  loginProvider.login(context);
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF044B89),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 75, vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: loginProvider.isLoading
+                                  ? const CircularProgressIndicator(
+                                strokeWidth: 2, // Increase the stroke width to make it bigger
+                                valueColor: AlwaysStoppedAnimation(Colors.white),
+                              )
+                                  : Text(
+                                'Sign in',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            );
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF044B89),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 90, vertical: 15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-
-
-                          child: Text(
-                            'Sign in',
-                            style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              color: Colors.white,
-                            ),
-                          ),
                         ),
                       ),
                       SizedBox(height: 20),
@@ -211,15 +213,15 @@ class _LoginScreenState extends State<LoginScreen>
                               children: [
                                 TextButton(
                                   onPressed: () async {
-                                    const url = 'https://institute.zbmtech.com/'; // replace with your terms and conditions URL
-                                    if (await canLaunch(url)) {
-                                      await launch(url);
+                                    const url = 'https://zainalidev.infy.uk';
+                                    if (await canLaunchUrl(Uri.parse(url))) {
+                                      await launchUrl(Uri.parse(url));
                                     } else {
                                       throw 'Could not launch $url';
                                     }
                                   },
                                   child: Text(
-                                    'Terms & Condition',
+                                    'Terms & Conditions',
                                     style: GoogleFonts.poppins(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
@@ -231,9 +233,9 @@ class _LoginScreenState extends State<LoginScreen>
                                     style: GoogleFonts.poppins(fontSize: 13)),
                                 TextButton(
                                   onPressed: () async {
-                                    const url = 'https://institute.zbmtech.com/'; // replace with your privacy policy URL
-                                    if (await canLaunch(url)) {
-                                      await launch(url);
+                                    const url = 'https://zainalidev.infy.uk';
+                                    if (await canLaunchUrl(Uri.parse(url))) {
+                                      await launchUrl(Uri.parse(url));
                                     } else {
                                       throw 'Could not launch $url';
                                     }
@@ -243,14 +245,45 @@ class _LoginScreenState extends State<LoginScreen>
                                     style: GoogleFonts.poppins(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
-
                                       decoration: TextDecoration.underline,
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "New User? ",
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SignupScreen(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                "Sign Up",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF044B89),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),

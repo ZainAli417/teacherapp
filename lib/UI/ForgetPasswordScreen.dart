@@ -6,28 +6,27 @@ import '../providers/forget_password_provider.dart';
 class ForgotPasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Get the viewInsets to detect keyboard height
     final viewInsets = MediaQuery.of(context).viewInsets;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      padding: EdgeInsets.only(bottom: viewInsets.bottom), // Adjust padding when keyboard is up
+      padding: EdgeInsets.only(bottom: viewInsets.bottom),
       constraints: BoxConstraints(
         maxWidth: 500,
-        maxHeight: viewInsets.bottom == 0 ? 260 : 800, // Changes height based on keyboard
+        maxHeight: viewInsets.bottom == 0 ? 260 : 800,
       ),
       decoration: BoxDecoration(
-        color: Colors.white, // Background color
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(10,6,10,6), // Proper padding to avoid content cut-off
+        padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
         child: SafeArea(
           child: SingleChildScrollView(
-            reverse: true, // Ensures the view scrolls to the bottom when the keyboard appears
+            reverse: true,
             child: Column(
-              mainAxisSize: MainAxisSize.max, // Takes only required space
-              crossAxisAlignment: CrossAxisAlignment.center, // Makes the content full-width
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -63,8 +62,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                         ? null
                         : () async {
                       await Provider.of<ForgotPasswordProvider>(context, listen: false)
-                          .submitForgotPassword();
-                      Navigator.of(context).pop();
+                          .submitForgotPassword(context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF044B89),
@@ -74,7 +72,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                       ),
                     ),
                     child: Provider.of<ForgotPasswordProvider>(context, listen: true).isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
+                        ? const CircularProgressIndicator(color: Colors.white,strokeWidth: 2,)
                         : Text(
                       'Submit',
                       style: GoogleFonts.poppins(

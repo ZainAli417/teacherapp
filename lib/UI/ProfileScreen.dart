@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../providers/profile_provider.dart';
-
 
 class ProfileScreen extends StatelessWidget {
   @override
@@ -13,129 +11,109 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        toolbarHeight: 100,
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: SvgPicture.asset(
-            'assets/images/back_icon.svg',
-            color: Color(0xFF044B89),
-          ),
-          onPressed: () {
-
-            },
-        ),
-
-        flexibleSpace: Stack(
-          children: [
-            Container(
-              height: 130,
-
-              decoration: const BoxDecoration(
-                color: Color(0xFF044B89),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                ),
-              ),
-            ),
-
-            Positioned(
-              top: 45,
-              left: MediaQuery.of(context).size.width / 2 - 50,
-              child: CircleAvatar(
-                radius: 45,
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.white,
-                child: CircleAvatar(
-                  radius: 38,
-                  backgroundImage: NetworkImage(profileProvider.avatarUrl),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 5, 16, 5), // Reduce top padding to decrease space
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 5),
-              Center(
-                child: Text(
-                  profileProvider.teacherName,
-                  style: GoogleFonts.poppins(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              const Divider(),
-              const SizedBox(height: 10),
-              Text(
-                'Personal Details',
-                style: GoogleFonts.poppins(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
-                ),
-              ),
-              const SizedBox(height: 10),
-              _buildInfoItem(
-                context,
-                icon: 'assets/images/user_pro_icon.svg',
-                title: 'Email',
-                subtitle: profileProvider.email,
-              ),
-              _buildInfoItem(
-                context,
-                icon: 'assets/images/phone-call.svg',
-                title: 'Phone Number',
-                subtitle: profileProvider.phoneNumber,
-              ),
-              _buildInfoItem(
-                context,
-                icon: 'assets/images/user_pro_dob_icon.svg',
-                title: 'Date of Birth',
-                subtitle: profileProvider.dateOfBirth,
-              ),
-              _buildInfoItem(
-                context,
-                icon: 'assets/images/gender.svg',
-                title: 'Gender',
-                subtitle: profileProvider.gender,
-              ),
-              _buildInfoItem(
-                context,
-                icon: 'assets/images/qualification.svg',
-                title: 'Qualification',
-                subtitle: profileProvider.qualification,
-              ),
-              _buildInfoItem(
-                context,
-                icon: 'assets/images/user_pro_address_icon.svg',
-                title: 'Current Address',
-                subtitle: profileProvider.currentAddress,
-              ),
-              _buildInfoItem(
-                context,
-                icon: 'assets/images/user_pro_address_icon.svg',
-                title: 'Permanent Address',
-                subtitle: profileProvider.permanentAddress,
-              ),
-            ],
-          ),
-        ),
-      ),
-      // bottomNavigationBar: FloatingNavbar(), // Assuming FloatingNavbar is your bottom nav widget
+      appBar: _buildAppBar(context, profileProvider),
+      body: profileProvider.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : profileProvider.teacherData != null
+          ? _buildProfileContent(context, profileProvider)
+          : const Center(child: Text('No data available')),
     );
   }
 
-  Widget _buildInfoItem(BuildContext context,
-      {required String icon, required String title, required String subtitle}) {
+  AppBar _buildAppBar(BuildContext context, ProfileProvider profileProvider) {
+    const defaultAvatarUrl =
+        'https://firebasestorage.googleapis.com/v0/b/unisoft-tmp.appspot.com/o/Default%2Fdummy-profile.png?alt=media&token=ebbb29f7-0ab8-4437-b6d5-6b2e4cfeaaf7'; // Fallback image URL
+
+    return AppBar(
+      toolbarHeight: 100,
+      backgroundColor: Colors.white,
+      leading: IconButton(
+        icon: SvgPicture.asset(
+          'assets/images/back_icon.svg',
+          color: const Color(0xFF044B89),
+        ),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      flexibleSpace: Stack(
+        children: [
+          Container(
+            height: 130,
+            decoration: const BoxDecoration(
+              color: Color(0xFF044B89),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 45,
+            left: MediaQuery.of(context).size.width / 2 - 50,
+            child: CircleAvatar(
+              radius: 45,
+              backgroundColor: Colors.white,
+              child: CircleAvatar(
+                radius: 38,
+                backgroundImage: NetworkImage(
+                  profileProvider.teacherData?.avatarUrl?.isNotEmpty == true
+                      ? profileProvider.teacherData!.avatarUrl
+                      : defaultAvatarUrl, // Fallback to default image if avatarUrl is empty
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileContent(BuildContext context, ProfileProvider profileProvider) {
+    final teacher = profileProvider.teacherData!;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 5),
+          Center(
+            child: Text(
+              teacher.teacherName,
+              style: GoogleFonts.poppins(
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          const Divider(),
+          const SizedBox(height: 10),
+          _buildSectionTitle('Personal Details'),
+          const SizedBox(height: 10),
+          _buildInfoItem(context, 'assets/images/user_pro_icon.svg', 'Email', teacher.email),
+          _buildInfoItem(context, 'assets/images/phone-call.svg', 'Phone Number', teacher.phoneNumber),
+          _buildInfoItem(context, 'assets/images/user_pro_dob_icon.svg', 'Date of Birth', teacher.dateOfBirth),
+          _buildInfoItem(context, 'assets/images/gender.svg', 'Gender', teacher.gender),
+          _buildInfoItem(context, 'assets/images/qualification.svg', 'Qualification', teacher.qualification),
+          _buildInfoItem(context, 'assets/images/user_pro_address_icon.svg', 'Current Address', teacher.currentAddress),
+          _buildInfoItem(context, 'assets/images/user_pro_address_icon.svg', 'Permanent Address', teacher.permanentAddress),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: GoogleFonts.poppins(
+        fontSize: 20,
+        fontWeight: FontWeight.w500,
+        color: Colors.black,
+      ),
+    );
+  }
+
+  Widget _buildInfoItem(BuildContext context, String icon, String title, String subtitle) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
@@ -152,7 +130,7 @@ class ProfileScreen extends StatelessWidget {
               height: 30,
             ),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

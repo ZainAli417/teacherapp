@@ -41,47 +41,53 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyC4OY3THV8bNpMMszJa22gG9qQrgrRspIs',
-    appId: '1:181208508375:web:a5dc7d986cd99d5e998d92',
-    messagingSenderId: '181208508375',
-    projectId: 'learning-ms-37dc0',
-    authDomain: 'learning-ms-37dc0.firebaseapp.com',
-    storageBucket: 'learning-ms-37dc0.firebasestorage.app',
+    apiKey: 'AIzaSyB-f1afwFMg-0aafrtI1-w6CaoFkwC2fTw',
+    appId: '1:535015116281:web:61d748a94e94f653e88128',
+    messagingSenderId: '535015116281',
+    projectId: 'zresume-67ec9',
+    authDomain: 'zresume-67ec9.firebaseapp.com',
+    storageBucket: 'zresume-67ec9.appspot.com',
+    measurementId: 'G-S8C968JW36',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBCy9aMP5z_Av0DXqImrj0ZeebqE1NkF28',
-    appId: '1:181208508375:android:7b6e50742225bdf7998d92',
-    messagingSenderId: '181208508375',
-    projectId: 'learning-ms-37dc0',
-    storageBucket: 'learning-ms-37dc0.firebasestorage.app',
+    apiKey: 'AIzaSyB-tGZOK6SVm9EWEqqbova6KvMwPCvPmh8',
+    appId: '1:535015116281:android:52520383ded0e1a4e88128',
+    messagingSenderId: '535015116281',
+    projectId: 'zresume-67ec9',
+    storageBucket: 'zresume-67ec9.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyB0xI9VASbb7dCakbrTQOE9UBeqpgmyDAQ',
-    appId: '1:181208508375:ios:6983650246fac7d7998d92',
-    messagingSenderId: '181208508375',
-    projectId: 'learning-ms-37dc0',
-    storageBucket: 'learning-ms-37dc0.firebasestorage.app',
+    apiKey: 'AIzaSyAyBBu5HDN6cGPP5ZmF8ufej6nU4nn4NAE',
+    appId: '1:535015116281:ios:c41ab1c60e994422e88128',
+    messagingSenderId: '535015116281',
+    projectId: 'zresume-67ec9',
+    storageBucket: 'zresume-67ec9.appspot.com',
+    androidClientId: '535015116281-f8qkrpp4ngeemn4mps3rjnvjmct8had4.apps.googleusercontent.com',
+    iosClientId: '535015116281-o413i6g6bjjvdp39g1o8jfaaj04u4n95.apps.googleusercontent.com',
     iosBundleId: 'com.example.ollapp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyB0xI9VASbb7dCakbrTQOE9UBeqpgmyDAQ',
-    appId: '1:181208508375:ios:6983650246fac7d7998d92',
-    messagingSenderId: '181208508375',
-    projectId: 'learning-ms-37dc0',
-    storageBucket: 'learning-ms-37dc0.firebasestorage.app',
-    iosBundleId: 'com.example.ollapp',
+    apiKey: 'AIzaSyAyBBu5HDN6cGPP5ZmF8ufej6nU4nn4NAE',
+    appId: '1:535015116281:ios:9349334b70b4ba28e88128',
+    messagingSenderId: '535015116281',
+    projectId: 'zresume-67ec9',
+    storageBucket: 'zresume-67ec9.appspot.com',
+    androidClientId: '535015116281-f8qkrpp4ngeemn4mps3rjnvjmct8had4.apps.googleusercontent.com',
+    iosClientId: '535015116281-6uudfubg8aoo5qov6sa6r5h975a7tg9t.apps.googleusercontent.com',
+    iosBundleId: 'com.example.app',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyC4OY3THV8bNpMMszJa22gG9qQrgrRspIs',
-    appId: '1:181208508375:web:2a6cd5e944d6b87c998d92',
-    messagingSenderId: '181208508375',
-    projectId: 'learning-ms-37dc0',
-    authDomain: 'learning-ms-37dc0.firebaseapp.com',
-    storageBucket: 'learning-ms-37dc0.firebasestorage.app',
+    apiKey: 'AIzaSyB-f1afwFMg-0aafrtI1-w6CaoFkwC2fTw',
+    appId: '1:535015116281:web:55ae7cea643d5c75e88128',
+    messagingSenderId: '535015116281',
+    projectId: 'zresume-67ec9',
+    authDomain: 'zresume-67ec9.firebaseapp.com',
+    storageBucket: 'zresume-67ec9.appspot.com',
+    measurementId: 'G-7WRVCK9YCY',
   );
 
 }

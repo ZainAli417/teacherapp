@@ -5,6 +5,7 @@ class CreateTopicProvider extends ChangeNotifier {
   String selectedSubject = "Arts";
   String assignmentName = "";
   String instructions = "";
+  String status="In Review";
 
   List<String> referenceMaterials = [];
 

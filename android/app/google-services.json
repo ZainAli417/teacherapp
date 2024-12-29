@@ -1,26 +1,36 @@
 {
   "project_info": {
-    "project_number": "181208508375",
-    "project_id": "learning-ms-37dc0",
-    "storage_bucket": "learning-ms-37dc0.firebasestorage.app"
+    "project_number": "535015116281",
+    "project_id": "zresume-67ec9",
+    "storage_bucket": "zresume-67ec9.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:181208508375:android:7b6e50742225bdf7998d92",
+        "mobilesdk_app_id": "1:535015116281:android:52520383ded0e1a4e88128",
         "android_client_info": {
           "package_name": "com.example.ollapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "535015116281-d5lmgvqcl8bvb4n3s497ocgq54316n4u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyBCy9aMP5z_Av0DXqImrj0ZeebqE1NkF28"
+          "current_key": "AIzaSyB-tGZOK6SVm9EWEqqbova6KvMwPCvPmh8"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "535015116281-d5lmgvqcl8bvb4n3s497ocgq54316n4u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

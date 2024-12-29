@@ -3,9 +3,8 @@ import 'package:ollapp/Navbar.dart';
 import 'package:ollapp/Sub_Screens/announcement_screen.dart';
 import 'package:ollapp/Sub_Screens/class_screen.dart';
 import 'package:ollapp/Sub_Screens/create_lesson.dart';
-import 'package:ollapp/Sub_Screens/create_topic.dart';
+import 'package:ollapp/Sub_Screens/upload_lecture.dart';
 import 'package:ollapp/Sub_Screens/lesson_screen.dart';
-import 'package:ollapp/Sub_Screens/topic_screen.dart';
 import 'package:ollapp/UI/ProfileScreen.dart';
 import 'package:ollapp/UI/SignUp.dart';
 import 'package:ollapp/UI/TeacherScreen.dart';
@@ -99,10 +98,6 @@ class TeacherApp extends StatelessWidget {
 
           '/create_assignment': (context) => const Create_Assingment(),
           '/assignment': (context) => const AssignmentScreen(),
-
-          '/topic': (context) => const TopicScreen(),
-          '/create_topic': (context) => const Create_Topic(),
-
           '/lesson': (context) => const LessonScreen(),
           '/create_lesson': (context) => const Create_Lesson(),
           '/holiday': (context) => const HolidayScreen(),

@@ -145,26 +145,57 @@ class _LoginScreenState extends State<LoginScreen>
                         },
                       ),
                       SizedBox(height: 10),
-                      Align(
+
+                     Row(
+                       children: [
+                         Align(
                         alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: false,
-                              builder: (context) => ForgotPasswordScreen(),
-                            );
-                          },
-                          child: Text(
-                            'Forgot password?',
-                            style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF044B89),
-                            ),
-                          ),
-                        ),
+                           child: TextButton(
+                             onPressed: () {
+                               Navigator.push(
+                                 context,
+                                 MaterialPageRoute(
+                                   builder: (context) => SignupScreen(),
+                                 ),
+                               );
+                             },
+                             child: Text(
+                               "New User? Register",
+                               style: GoogleFonts.poppins(
+                                 fontSize: 14,
+                                 decoration: TextDecoration.underline,
+                                 fontWeight: FontWeight.w500,
+                                 color: Color(0xFF0A8C52),
+                               ),
+                             ),
+                           ),
+
                       ),
+                         SizedBox(width:50),
+                         Align(
+                           alignment: Alignment.centerLeft,
+                           child: TextButton(
+                             onPressed: () {
+                               showModalBottomSheet(
+                                 context: context,
+                                 isScrollControlled: false,
+                                 builder: (context) => ForgotPasswordScreen(),
+                               );
+                             },
+                             child: Text(
+                               'Forgot password?',
+                               style: GoogleFonts.poppins(
+                                 color: Color(0xFF777272),
+                                 decoration: TextDecoration.underline,
+                                 fontSize: 12,
+                                 fontWeight: FontWeight.w400,
+                               ),
+                             ),
+                           ),
+
+                         ),
+                  ]
+                     ),
                       SizedBox(height: 20),
                       Center(
                         child: Consumer<LoginProvider>(
@@ -176,9 +207,9 @@ class _LoginScreenState extends State<LoginScreen>
                                 }
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFF044B89),
+                                backgroundColor: Color(0xFF0A8C52),
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 75, vertical: 10),
+                                    horizontal: 60, vertical: 10),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -223,6 +254,8 @@ class _LoginScreenState extends State<LoginScreen>
                                   child: Text(
                                     'Terms & Conditions',
                                     style: GoogleFonts.poppins(
+                                      color: Color(0xFF0A8C52),
+
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
                                       decoration: TextDecoration.underline,
@@ -243,6 +276,8 @@ class _LoginScreenState extends State<LoginScreen>
                                   child: Text(
                                     'Privacy Policy',
                                     style: GoogleFonts.poppins(
+                                      color: Color(0xFF0A8C52),
+
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
                                       decoration: TextDecoration.underline,
@@ -250,39 +285,6 @@ class _LoginScreenState extends State<LoginScreen>
                                   ),
                                 ),
                               ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "New User? ",
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SignupScreen(),
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                "Sign Up",
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF044B89),
-                                ),
-                              ),
                             ),
                           ],
                         ),

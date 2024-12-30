@@ -1,27 +1,16 @@
 import 'dart:io';
-
-import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ollapp/Sub_Screens/assingment_screen.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
-import '../Sub_Screens/announcement_screen.dart';
 import '../Sub_Screens/class_screen.dart';
 import '../Sub_Screens/upload_lecture.dart';
-import '../Sub_Screens/exams.dart';
-import '../Sub_Screens/holiday_screen.dart';
-import '../Sub_Screens/lesson_screen.dart';
-import '../Sub_Screens/results.dart';
+import '../models/audioplayer.dart';
 import '../providers/create_topic_provider.dart';
 import '../providers/teacher_provider.dart';
-
-import 'package:flutter_svg/flutter_svg.dart';
-
 import 'LoginScreen.dart';
 
 class TeacherScreen extends StatefulWidget {
@@ -33,21 +22,28 @@ class TeacherScreen extends StatefulWidget {
 
 class _TeacherScreenState extends State<TeacherScreen> {
   final CreateTopicProvider assignmentProvider = CreateTopicProvider();
-
   String _teacherName = ""; // Placeholder for the teacher's name
   bool _isLoading = true;
-
+  List<String> audioFiles = []; // This will hold the audio URLs from Firestore
+  AudioPlayer? _currentAudioPlayer; // Currently playing audio player
+  String? _currentPlayingAudioUrl; // Track which audio URL is currently playing
   @override
   void initState() {
     super.initState();
     _fetchTeacherName();
+    _fetchAudioFiles(); // Fetch audio files from Firestore
+  }
+
+  @override
+  void dispose() {
+    _currentAudioPlayer?.dispose(); // Dispose the current audio player
+    super.dispose();
   }
 
   Future<void> _fetchTeacherName() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        // Query the teacher's document in Firestore based on the current user's UID
         DocumentSnapshot teacherDoc = await FirebaseFirestore.instance
             .collection('teacher')
             .doc(user.uid)
@@ -55,8 +51,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
 
         if (teacherDoc.exists) {
           setState(() {
-            _teacherName =
-                "${teacherDoc['FirstName']} ${teacherDoc['LastName']}";
+            _teacherName = "${teacherDoc['FirstName']} ${teacherDoc['LastName']}";
             _isLoading = false;
           });
         } else {
@@ -69,6 +64,40 @@ class _TeacherScreenState extends State<TeacherScreen> {
       setState(() {
         _teacherName = "Error fetching name";
         _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _fetchAudioFiles() async {
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('Study_material').get();
+      setState(() {
+        audioFiles = snapshot.docs.map((doc) => (doc['AudioFiles'] as List).cast<String>()).expand((x) => x).toList(); // Ensure correct type
+      });
+    } catch (e) {
+      print("Error fetching audio files: $e");
+    }
+  }
+
+  void _stopCurrentAudio() {
+    if (_currentAudioPlayer != null) {
+      _currentAudioPlayer?.pause(); // Pause the current audio
+      _currentAudioPlayer?.dispose();
+      _currentAudioPlayer = null;
+      _currentPlayingAudioUrl = null; // Reset the currently playing audio URL
+    }
+  }
+
+
+  void _playAudio(String audioUrl) {
+    if (_currentPlayingAudioUrl == audioUrl) {
+      // If the same audio is clicked, pause it
+      setState(() {
+        _currentPlayingAudioUrl = null; // Reset to not playing
+      });
+    } else {
+      setState(() {
+        _currentPlayingAudioUrl = audioUrl; // Track currently playing audio URL
       });
     }
   }
@@ -331,14 +360,12 @@ class _TeacherScreenState extends State<TeacherScreen> {
                                                 shape: const StadiumBorder(),
                                                 backgroundColor: Colors.blue,
                                                 padding:
-                                                const EdgeInsets.symmetric(
+                                                    const EdgeInsets.symmetric(
                                                   horizontal: 16,
                                                   vertical: 8,
                                                 ),
                                               ),
-                                              onPressed: () {
-
-                                              },
+                                              onPressed: () {},
                                               child: Text(
                                                 status,
                                                 style: GoogleFonts.poppins(
@@ -393,60 +420,31 @@ class _TeacherScreenState extends State<TeacherScreen> {
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                        subtitle: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: List<Widget>.generate(audioFiles.length, (audioIndex) {
-                                            final audioUrl = audioFiles[audioIndex];
-                                            final audioPlayer = AudioPlayer();
 
-                                            return Column(
-                                              children: [
-                                                Container(
-                                                  margin: const EdgeInsets.symmetric(vertical: 8),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.grey[200],
-                                                    borderRadius: BorderRadius.circular(8),
-                                                  ),
-                                                  padding: const EdgeInsets.all(8),
-                                                  child: Row(
-                                                    children: [
-                                                      IconButton(
-                                                        icon: const Icon(Icons.play_arrow, color: Colors.green),
-                                                        onPressed: () async {
-                                                          await audioPlayer.play(UrlSource(audioUrl));
-                                                        },
-                                                      ),
-                                                      IconButton(
-                                                        icon: const Icon(Icons.pause, color: Colors.blue),
-                                                        onPressed: () async {
-                                                          await audioPlayer.pause();
-                                                        },
-                                                      ),
-                                                      IconButton(
-                                                        icon: const Icon(Icons.stop, color: Colors.red),
-                                                        onPressed: () async {
-                                                          await audioPlayer.stop();
-                                                        },
-                                                      ),
-                                                      Expanded(
-                                                        child: Text(
-                                                          'Audio File ${audioIndex + 1}',
-                                                          style: GoogleFonts.poppins(
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.w400,
-                                                            color: Colors.black,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
+                                        subtitle: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: List<Widget>.generate(
+                                              audioFiles.length, (audioIndex) {
+                                            final audioUrl =
+                                                audioFiles[audioIndex];
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 8),
+                                              child: AudioPlayerWidget(
+                                                audioUrl: audioUrl,
+                                                onPlay: () => _playAudio(audioUrl),
+                                                onStop: ()=> _stopCurrentAudio(),
+                                                isPlaying: _currentPlayingAudioUrl == audioUrl,
+                                              ),
+
                                             );
                                           }),
                                         ),
-                                      ),
 
+
+                                      ),
                                     ],
                                   ),
                                 );

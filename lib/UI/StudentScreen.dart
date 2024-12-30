@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:ollapp/Sub_Screens/assingment_screen.dart';
 import 'package:ollapp/UI/TeacherScreen.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,8 @@ import '../Sub_Screens/exams.dart';
 import '../Sub_Screens/holiday_screen.dart';
 import '../Sub_Screens/lesson_screen.dart';
 import '../Sub_Screens/results.dart';
+import '../models/audioplayer.dart';
+import '../providers/principal_provider.dart';
 import '../providers/teacher_provider.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
@@ -26,14 +29,23 @@ class Studentscreen extends StatefulWidget {
 class StudentScreenState extends State<Studentscreen> {
   String _studentName = ""; // Placeholder for the teacher's name
   bool _isLoading = true;
+  String principalName = ""; // Principal's name
+  AudioPlayer? _currentAudioPlayer; // Currently playing audio
+  String? _currentPlayingAudioUrl; // Currently playing audio URL
+
+  @override
+  void dispose() {
+    _currentAudioPlayer?.dispose(); // Dispose audio player
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
-    _fetchTeacherName();
+    _fetchStudentName();
   }
 
-  Future<void> _fetchTeacherName() async {
+  Future<void> _fetchStudentName() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -45,7 +57,8 @@ class StudentScreenState extends State<Studentscreen> {
 
         if (teacherDoc.exists) {
           setState(() {
-            _studentName = "${teacherDoc['FirstName']} ${teacherDoc['LastName']}";
+            _studentName =
+                "${teacherDoc['FirstName']} ${teacherDoc['LastName']}";
             _isLoading = false;
           });
         } else {
@@ -61,19 +74,38 @@ class StudentScreenState extends State<Studentscreen> {
       });
     }
   }
+
+  void _stopCurrentAudio() {
+    if (_currentAudioPlayer != null) {
+      _currentAudioPlayer?.pause();
+      _currentAudioPlayer?.dispose();
+      _currentAudioPlayer = null;
+      _currentPlayingAudioUrl = null;
+    }
+  }
+
+  void _playAudio(String audioUrl) {
+    if (_currentPlayingAudioUrl == audioUrl) {
+      setState(() {
+        _currentPlayingAudioUrl = null; // Pause audio if the same is clicked
+      });
+    } else {
+      setState(() {
+        _currentPlayingAudioUrl = audioUrl; // Update playing audio
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final teacherProvider = Provider.of<TeacherProvider>(context);
+    final principalProvider = Provider.of<PrincipalProvider>(context);
+
     if (FirebaseAuth.instance.currentUser == null) {
-
       Navigator.pushReplacement(
-
         context,
-
         MaterialPageRoute(builder: (context) => LoginScreen()),
-
       );
-
     }
     return Scaffold(
       backgroundColor: Colors.white.withOpacity(1),
@@ -83,7 +115,7 @@ class StudentScreenState extends State<Studentscreen> {
           Stack(
             children: [
               Container(
-                height: 200,
+                height: 160,
                 decoration: const BoxDecoration(
                   color: Color(0xFF044B89),
                   borderRadius: BorderRadius.only(
@@ -93,7 +125,7 @@ class StudentScreenState extends State<Studentscreen> {
                 ),
               ),
               Positioned(
-                bottom: 80,
+                bottom: 90,
                 right: 240,
                 child: Container(
                   width: 300,
@@ -106,7 +138,7 @@ class StudentScreenState extends State<Studentscreen> {
                 ),
               ),
               Positioned(
-                bottom: 60,
+                bottom: 70,
                 right: 220,
                 child: Container(
                   width: 300,
@@ -132,7 +164,7 @@ class StudentScreenState extends State<Studentscreen> {
               ),
               Positioned(
                 top: 75,
-                left: 30,
+                left: 10,
                 child: Row(
                   children: [
                     CircleAvatar(
@@ -140,19 +172,19 @@ class StudentScreenState extends State<Studentscreen> {
                       radius: 30,
                       backgroundImage: NetworkImage(teacherProvider.avatarUrl),
                     ),
-                    const SizedBox(width: 20),
+                    const SizedBox(width: 15),
                     _isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
                         : Text(
                       _studentName,
                       style: GoogleFonts.poppins(
-                        fontSize: 24,
+                        fontSize: 18,
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(width: 50),
-                    _buildLogoutButton()
+                    _buildLogoutButton(),
                   ],
                 ),
               ),
@@ -167,69 +199,67 @@ class StudentScreenState extends State<Studentscreen> {
                 children: [
                   // Class Teacher Grid
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Class Teacher',
-                          style: GoogleFonts.poppins(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        GridView.count(
-                          crossAxisCount: 3,
-                          shrinkWrap: true,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 5,
-                          physics: NeverScrollableScrollPhysics(),
-                          children: [
-                            ClassCard(
-                              title: '9 - A Science',
-                              subtitle: 'Islamabad',
-                              color: Colors.blueAccent,
-                              height: 60.0,
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ClassSheet()),
-                                );
-                              },
-                            ),
-                            ClassCard(
-                              title: '8 - A Medical',
-                              subtitle: 'Rawalpindi',
-                              color: Colors.redAccent,
-                              height: 60.0,
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ClassSheet()),
-                                );
-                              },
-                            ),
-                            ClassCard(
-                              title: '10 - A Arts',
-                              subtitle: 'Lahore',
-                              color: Colors.teal,
-                              height: 60.0,
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ClassSheet()),
-                                );
-                              },
-                            ),
-                            // Add more cards with their respective bottom sheets
-                          ],
-                        ),
-                      ],
+                    padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+                    child: Text(
+                      'Available Lectures',
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
+                  principalProvider.approvedTeacherCards.isEmpty
+                      ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 50.0),
+                      child: Text(
+                        'No approved content available.',
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  )
+                      : ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: principalProvider.approvedTeacherCards.length,
+                    itemBuilder: (context, index) {
+                      final card = principalProvider.approvedTeacherCards[index];
+
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          side: BorderSide(
+                            color: Colors.black.withOpacity(0.2),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (card['audioFiles'].isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: card['audioFiles'].map<Widget>((audioUrl) {
+                                    return AudioPlayerWidget(
+                                      audioUrl: audioUrl,
+                                      onPlay: () => _playAudio(audioUrl),
+                                      onStop: _stopCurrentAudio,
+                                      isPlaying: _currentPlayingAudioUrl == audioUrl,
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+
                   SizedBox(height: 20),
                   // Information Section
                   Padding(
@@ -238,7 +268,7 @@ class StudentScreenState extends State<Studentscreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Information',
+                          'Quiz Screen',
                           style: GoogleFonts.poppins(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
@@ -260,7 +290,7 @@ class StudentScreenState extends State<Studentscreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                  const AssignmentScreen()),
+                                      const AssignmentScreen()),
                             );
                           },
                         ),
@@ -279,7 +309,7 @@ class StudentScreenState extends State<Studentscreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                  const AnnouncementScreen()),
+                                      const AnnouncementScreen()),
                             );
                           },
                         ),
@@ -315,7 +345,7 @@ class StudentScreenState extends State<Studentscreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>  TeacherScreen()),
+                                  builder: (context) => TeacherScreen()),
                             );
                           },
                         ),
@@ -368,7 +398,6 @@ class StudentScreenState extends State<Studentscreen> {
                               MaterialPageRoute(
                                   builder: (context) => ResultScreen()),
                             );
-
                           },
                         ),
                       ],
@@ -382,6 +411,7 @@ class StudentScreenState extends State<Studentscreen> {
       ),
     );
   }
+
   Widget _buildLogoutButton() {
     return Column(
       children: [
@@ -393,7 +423,7 @@ class StudentScreenState extends State<Studentscreen> {
             ),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           ),
-          icon:  Icon(Icons.logout_outlined, color: Colors.white),
+          icon: Icon(Icons.logout_outlined, color: Colors.white),
           label: Text(
             "Logout",
             style: GoogleFonts.poppins(
@@ -413,10 +443,6 @@ class StudentScreenState extends State<Studentscreen> {
       ],
     );
   }
-
-
-
-
 }
 
 class ClassCard extends StatelessWidget {
@@ -428,11 +454,11 @@ class ClassCard extends StatelessWidget {
 
   const ClassCard(
       {Key? key,
-        required this.title,
-        required this.subtitle,
-        required this.color,
-        required this.onTap, // Added this line
-        this.height = 80.0})
+      required this.title,
+      required this.subtitle,
+      required this.color,
+      required this.onTap, // Added this line
+      this.height = 80.0})
       : super(key: key);
 
   @override
@@ -499,7 +525,6 @@ class ClassCard extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class CapsuleListItem extends StatelessWidget {
@@ -530,7 +555,7 @@ class CapsuleListItem extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment:
-            MainAxisAlignment.spaceAround, // Center horizontally
+                MainAxisAlignment.spaceAround, // Center horizontally
             children: [
               icon, // Icon
               const SizedBox(width: 1), // Add some space

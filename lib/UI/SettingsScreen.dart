@@ -247,7 +247,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            "App Version 1.1.1 ZBMTech",
+            "App Version 1.1.1 Zain Ali",
             style: GoogleFonts.poppins(
               fontSize: 12,
               color: Colors.black54,

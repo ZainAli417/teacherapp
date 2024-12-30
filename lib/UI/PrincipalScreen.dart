@@ -1,22 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ollapp/Sub_Screens/assingment_screen.dart';
-import 'package:ollapp/UI/TeacherScreen.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:ollapp/models/audioplayer.dart';
 import 'package:provider/provider.dart';
-import '../Sub_Screens/announcement_screen.dart';
-import '../Sub_Screens/class_screen.dart';
-import '../Sub_Screens/exams.dart';
-import '../Sub_Screens/holiday_screen.dart';
-import '../Sub_Screens/lesson_screen.dart';
-import '../Sub_Screens/results.dart';
-import '../providers/teacher_provider.dart';
 
-import 'package:flutter_svg/flutter_svg.dart';
-
+import '../providers/principal_provider.dart';
 import 'LoginScreen.dart';
+import '../providers/teacher_provider.dart';
 
 class Principalscreen extends StatefulWidget {
   @override
@@ -24,66 +16,98 @@ class Principalscreen extends StatefulWidget {
 }
 
 class PrincipalScreenState extends State<Principalscreen> {
-  String _principalName = ""; // Placeholder for the teacher's name
+  String principalName = ""; // Principal's name
   bool _isLoading = true;
+  AudioPlayer? _currentAudioPlayer; // Currently playing audio
+  String? _currentPlayingAudioUrl; // Currently playing audio URL
 
   @override
   void initState() {
     super.initState();
-    _fetchTeacherName();
+    _fetchPrincipalName();
   }
 
-  Future<void> _fetchTeacherName() async {
+  @override
+  void dispose() {
+    _currentAudioPlayer?.dispose(); // Dispose audio player
+    super.dispose();
+  }
+
+  Future<void> _fetchPrincipalName() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        // Query the teacher's document in Firestore based on the current user's UID
-        DocumentSnapshot teacherDoc = await FirebaseFirestore.instance
+        DocumentSnapshot principalDoc = await FirebaseFirestore.instance
             .collection('principal')
             .doc(user.uid)
             .get();
 
-        if (teacherDoc.exists) {
+        if (principalDoc.exists) {
           setState(() {
-            _principalName = "${teacherDoc['FirstName']} ${teacherDoc['LastName']}";
+            principalName =
+                "${principalDoc['FirstName']} ${principalDoc['LastName']}";
             _isLoading = false;
           });
         } else {
-          throw Exception("Teacher document not found");
+          throw Exception("Principal document not found");
         }
       } else {
         throw Exception("User not logged in");
       }
     } catch (e) {
       setState(() {
-        _principalName = "Error fetching name";
+        principalName = "Error fetching name";
         _isLoading = false;
       });
     }
   }
+
+  void _stopCurrentAudio() {
+    if (_currentAudioPlayer != null) {
+      _currentAudioPlayer?.pause();
+      _currentAudioPlayer?.dispose();
+      _currentAudioPlayer = null;
+      _currentPlayingAudioUrl = null;
+    }
+  }
+
+  void _playAudio(String audioUrl) {
+    if (_currentPlayingAudioUrl == audioUrl) {
+      setState(() {
+        _currentPlayingAudioUrl = null; // Pause audio if the same is clicked
+      });
+    } else {
+      setState(() {
+        _currentPlayingAudioUrl = audioUrl; // Update playing audio
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final teacherProvider = Provider.of<TeacherProvider>(context);
+    final principalProvider = Provider.of<PrincipalProvider>(context);
+
+    // Redirect to login if user is not authenticated
     if (FirebaseAuth.instance.currentUser == null) {
-
-      Navigator.pushReplacement(
-
-        context,
-
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-
-      );
-
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+      });
+      return const SizedBox.shrink();
     }
+
     return Scaffold(
-      backgroundColor: Colors.white.withOpacity(1),
+      backgroundColor: Colors.white,
       body: Column(
         children: [
-          // Top Section
+          // Principal's Name Section
           Stack(
             children: [
               Container(
-                height: 200,
+                height: 160,
                 decoration: const BoxDecoration(
                   color: Color(0xFF044B89),
                   borderRadius: BorderRadius.only(
@@ -93,7 +117,7 @@ class PrincipalScreenState extends State<Principalscreen> {
                 ),
               ),
               Positioned(
-                bottom: 80,
+                bottom: 90,
                 right: 240,
                 child: Container(
                   width: 300,
@@ -106,7 +130,7 @@ class PrincipalScreenState extends State<Principalscreen> {
                 ),
               ),
               Positioned(
-                bottom: 60,
+                bottom: 70,
                 right: 220,
                 child: Container(
                   width: 300,
@@ -132,7 +156,7 @@ class PrincipalScreenState extends State<Principalscreen> {
               ),
               Positioned(
                 top: 75,
-                left: 30,
+                left: 10,
                 child: Row(
                   children: [
                     CircleAvatar(
@@ -140,241 +164,285 @@ class PrincipalScreenState extends State<Principalscreen> {
                       radius: 30,
                       backgroundImage: NetworkImage(teacherProvider.avatarUrl),
                     ),
-                    SizedBox(width: 20),
-                    _isLoading
-                        ? CircularProgressIndicator(color: Colors.white)
+                    const SizedBox(width: 15),
+                    principalProvider.isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
                         : Text(
-                      _principalName,
-                      style: GoogleFonts.poppins(
-                        fontSize: 24,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                            principalProvider.principalName,
+                            style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                     const SizedBox(width: 50),
                     _buildLogoutButton(),
-
                   ],
                 ),
               ),
             ],
           ),
-          // Scrollable Content Section
-          SizedBox(height: 10),
-
           Expanded(
             child: SingleChildScrollView(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Class Teacher Grid
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    padding: const EdgeInsets.fromLTRB(
+                        10, 10, 10, 0), // Reduced vertical padding
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Class Teacher',
+                          'Verified Teachers',
                           style: GoogleFonts.poppins(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.w600,
+                            color: Colors.black,
                           ),
                         ),
-                        GridView.count(
-                          crossAxisCount: 3,
+                        ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 5,
-                          physics: NeverScrollableScrollPhysics(),
-                          children: [
-                            ClassCard(
-                              title: '9 - A Science',
-                              subtitle: 'Islamabad',
-                              color: Colors.blueAccent,
-                              height: 60.0,
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ClassSheet()),
-                                );
-                              },
-                            ),
-                            ClassCard(
-                              title: '8 - A Medical',
-                              subtitle: 'Rawalpindi',
-                              color: Colors.redAccent,
-                              height: 60.0,
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ClassSheet()),
-                                );
-                              },
-                            ),
-                            ClassCard(
-                              title: '10 - A Arts',
-                              subtitle: 'Lahore',
-                              color: Colors.teal,
-                              height: 60.0,
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ClassSheet()),
-                                );
-                              },
-                            ),
-                            // Add more cards with their respective bottom sheets
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  // Information Section
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Information',
-                          style: GoogleFonts.poppins(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        CapsuleListItem(
-                          icon: Padding(
-                            padding: EdgeInsets.all(1),
-                            child: SvgPicture.asset(
-                              'assets/images/assignment_icon.svg',
-                              width: 44,
-                              height: 44,
-                            ),
-                          ),
-                          title: 'Assignments',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                  const AssignmentScreen()),
-                            );
-                          },
-                        ),
-                        CapsuleListItem(
-                          icon: Padding(
-                            padding: EdgeInsets.all(1),
-                            child: SvgPicture.asset(
-                              'assets/images/announcment_icon.svg',
-                              width: 44,
-                              height: 44,
-                            ),
-                          ),
-                          title: 'Announcements',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                  const AnnouncementScreen()),
-                            );
-                          },
-                        ),
-                        CapsuleListItem(
-                          icon: Padding(
-                            padding: EdgeInsets.all(1),
-                            child: SvgPicture.asset(
-                              'assets/images/lesson.svg',
-                              width: 44,
-                              height: 44,
-                            ),
-                          ),
-                          title: 'Lessons',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const LessonScreen()),
-                            );
-                          },
-                        ),
-                        CapsuleListItem(
-                          icon: Padding(
-                            padding: EdgeInsets.all(1),
-                            child: SvgPicture.asset(
-                              'assets/images/topics.svg',
-                              width: 44,
-                              height: 44,
-                            ),
-                          ),
-                          title: 'Topics',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>  TeacherScreen()),
-                            );
-                          },
-                        ),
-                        CapsuleListItem(
-                          icon: Padding(
-                            padding: EdgeInsets.all(1),
-                            child: SvgPicture.asset(
-                              'assets/images/holiday_icon.svg',
-                              width: 44,
-                              height: 44,
-                            ),
-                          ),
-                          title: 'Holidays',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const HolidayScreen()),
-                            );
-                          },
-                        ),
-                        CapsuleListItem(
-                          icon: Padding(
-                            padding: EdgeInsets.all(1),
-                            child: SvgPicture.asset(
-                              'assets/images/exam_icon.svg',
-                              width: 44,
-                              height: 44,
-                            ),
-                          ),
-                          title: 'Exams',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ExamsScreen()),
-                            );
-                          },
-                        ),
-                        CapsuleListItem(
-                          icon: SvgPicture.asset(
-                            'assets/images/result_icon.svg',
-                            width: 44,
-                            height: 44,
-                          ),
-                          title: 'Add Results',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ResultScreen()),
-                            );
+                          itemCount: principalProvider.teacherCards.length,
+                          itemBuilder: (context, index) {
+                            final teacher =
+                                principalProvider.teacherCards[index];
+                            final avatarUrl = teacher['avatarUrl'] ??
+                                'https://firebasestorage.googleapis.com/v0/b/unisoft-tmp.appspot.com/o/Default%2Fdummy-profile.png?alt=media&token=ebbb29f7-0ab8-4437-b6d5-6b2e4cfeaaf7'; // Default avatar URL if not set.
+                            final teacherName =
+                                teacher['teacherName'] ?? 'Unknown Teacher';
 
+                            return Card(
+                              color: Colors.white,
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 5,
+                                  horizontal:
+                                      5), // Reduced margin between cards
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundImage: NetworkImage(avatarUrl),
+                                      radius: 30,
+                                      backgroundColor: Colors.grey[300],
+                                    ),
+                                    const SizedBox(width: 15),
+                                    Text(
+                                      teacherName,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
                           },
                         ),
                       ],
                     ),
                   ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+                    child: Text(
+                      'Available Lectures',
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  principalProvider.teacherCards.isEmpty
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 50.0),
+                            child: Text(
+                              'No content uploaded by teachers.',
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: principalProvider.teacherCards.length,
+                          itemBuilder: (context, index) {
+                            final card = principalProvider.teacherCards[index];
+
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                side: BorderSide(
+                                  color: Colors.grey.withOpacity(0.2),
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ListTile(
+                                    title: Center(
+                                      child: Text(
+                                        'Uploaded By: ${card['teacherName']}',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                    subtitle: Center(
+                                      child: Text(
+                                        'Lecture Name: ${card['topicName']}',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(10, 3, 10, 3),
+                                    child: Text(
+                                      'Description: ${card['topicDescription']}',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                  if (card['audioFiles'].isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            'Lecture Audio Files:',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          ...card['audioFiles'].map((audioUrl) {
+                                            return AudioPlayerWidget(
+                                              audioUrl: audioUrl,
+                                              onPlay: () =>
+                                                  _playAudio(audioUrl),
+                                              onStop: _stopCurrentAudio,
+                                              isPlaying:
+                                                  _currentPlayingAudioUrl ==
+                                                      audioUrl,
+                                            );
+                                          }).toList(),
+                                        ],
+                                      ),
+                                    ),
+                                  Center(
+                                    child: StatefulBuilder(
+                                      builder: (context, setState) {
+                                        String?
+                                            selectedStatus; // Tracks the clicked status (Approved/Rejected)
+
+                                        void updateStatus(
+                                            String newStatus) async {
+                                          try {
+                                            await principalProvider
+                                                .updateStudyMaterialStatus(
+                                                    card['docId'], newStatus);
+
+                                            // Update the UI and show a snackbar
+                                            setState(() {
+                                              selectedStatus = newStatus;
+                                            });
+                                            if(selectedStatus=='Approve') {
+                                              _showSnackbar_success(context,
+                                                "Lecture has been $newStatus");
+                                            }
+                                            else{
+                                              _showSnackbar_fail(context,      "Lecture has been $newStatus");
+                                            }
+
+                                          } catch (e) {
+                                            // Show an error snackbar
+                                            _showSnackbar_fail(context, '$e');
+                                          }
+                                        }
+
+                                        return Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            ElevatedButton(
+                                              onPressed: (selectedStatus ==
+                                                          null ||
+                                                      selectedStatus ==
+                                                          'Rejected')
+                                                  ? () =>
+                                                      updateStatus('Approved')
+                                                  : null, // Disable if already approved
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.green,
+                                                shape: const StadiumBorder(),
+                                              ),
+                                              child: Text(
+                                                'Approve',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 120),
+                                            ElevatedButton(
+                                              onPressed: (selectedStatus ==
+                                                          null ||
+                                                      selectedStatus ==
+                                                          'Approved')
+                                                  ? () =>
+                                                      updateStatus('Rejected')
+                                                  : null, // Disable if already rejected
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.red,
+                                                shape: const StadiumBorder(),
+                                              ),
+                                              child: Text(
+                                                'Reject',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(height: 10,),
+
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                 ],
               ),
             ),
@@ -383,6 +451,7 @@ class PrincipalScreenState extends State<Principalscreen> {
       ),
     );
   }
+
   Widget _buildLogoutButton() {
     return Column(
       children: [
@@ -394,7 +463,7 @@ class PrincipalScreenState extends State<Principalscreen> {
             ),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           ),
-          icon:  Icon(Icons.logout_outlined, color: Colors.white),
+          icon: Icon(Icons.logout_outlined, color: Colors.white),
           label: Text(
             "Logout",
             style: GoogleFonts.poppins(
@@ -415,146 +484,54 @@ class PrincipalScreenState extends State<Principalscreen> {
     );
   }
 
-
-
-
-}
-
-class ClassCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final Color color;
-  final double height;
-  final VoidCallback onTap; // Added callback
-
-  const ClassCard(
-      {Key? key,
-        required this.title,
-        required this.subtitle,
-        required this.color,
-        required this.onTap, // Added this line
-        this.height = 80.0})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: height,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(10),
+  void _showSnackbar_success(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(
+            fontFamily: GoogleFonts.poppins().fontFamily,
+            fontSize: 16,
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 1),
-                    Text(
-                      subtitle,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // Circle with arrow at the bottom center
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: CircleAvatar(
-                  backgroundColor: Colors.white.withOpacity(0.9),
-                  radius: 16,
-                  child: Icon(
-                    Icons.arrow_forward_ios_outlined,
-                    color: color,
-                    size: 15,
-                  ),
-                ),
-              ),
-            ),
-          ],
+        backgroundColor: Colors.green.withOpacity(0.8),
+        duration: const Duration(seconds: 2),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
         ),
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.all(8),
+        dismissDirection: DismissDirection.startToEnd,
       ),
     );
   }
 
-}
-
-class CapsuleListItem extends StatelessWidget {
-  final Widget icon;
-  final String title;
-  final VoidCallback onTap;
-
-  const CapsuleListItem({
-    Key? key,
-    required this.icon,
-    required this.title,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Center(
-        child: Container(
-          height: 80,
-          width: 400,
-          margin: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.black12),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment:
-            MainAxisAlignment.spaceAround, // Center horizontally
-            children: [
-              icon, // Icon
-              const SizedBox(width: 1), // Add some space
-              Text(
-                title,
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(width: 1), // Add some space
-              const CircleAvatar(
-                backgroundColor: Colors.black,
-                radius: 16,
-                child: Icon(
-                  Icons.arrow_forward,
-                  color: Colors.white,
-                  size: 20,
-                ),
-              ),
-            ],
+  void _showSnackbar_fail(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(
+            fontFamily: GoogleFonts.poppins().fontFamily,
+            fontSize: 16,
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
           ),
         ),
+        backgroundColor: Colors.red.withOpacity(0.8),
+        duration: const Duration(seconds: 2),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
+        ),
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.all(8),
+        dismissDirection: DismissDirection.startToEnd,
       ),
     );
   }

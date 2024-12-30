@@ -17,6 +17,7 @@ import 'package:ollapp/providers/announcement_provider.dart';
 import 'package:ollapp/providers/create_lesson_provider.dart';
 import 'package:ollapp/providers/exams_provider.dart';
 import 'package:ollapp/providers/lesson_provider.dart';
+import 'package:ollapp/providers/principal_provider.dart';
 import 'package:ollapp/providers/profile_provider.dart';
 import 'package:ollapp/providers/result_Provider.dart';
 import 'package:ollapp/providers/setting_provider.dart';
@@ -55,6 +56,7 @@ class TeacherApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SignupProvider()),
         ChangeNotifierProvider(create: (_) => ForgotPasswordProvider()),
         ChangeNotifierProvider(create: (_) => TeacherProvider()),
+        ChangeNotifierProvider(create: (_) => PrincipalProvider()),
         ChangeNotifierProvider(create: (_) => ScheduleProvider()),
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),

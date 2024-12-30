@@ -23,7 +23,7 @@ class Create_lecture extends StatefulWidget {
 class _Create_LectureState extends State<Create_lecture> {
   final CreateTopicProvider assignmentProvider = CreateTopicProvider();
 
-  List<File> _selectedFiles = [];
+  final List<File> _selectedFiles = [];
   bool _isUploading = false;
 
   Future<void> _pickFiles() async {
@@ -36,14 +36,15 @@ class _Create_LectureState extends State<Create_lecture> {
 
       if (result != null) {
         setState(() {
-          _selectedFiles = result.paths.map((path) => File(path!)).toList();
+          _selectedFiles.addAll(result.paths.map((path) => File(path!)).toList());
         });
+      } else {
+        print("No files selected.");
       }
     } catch (e) {
       print("Error picking files: $e");
     }
   }
-
   Future<List<String>> _uploadFilesToFirebase() async {
     List<String> downloadUrls = [];
     final teachername = FirebaseAuth.instance.currentUser?.displayName;
@@ -51,14 +52,19 @@ class _Create_LectureState extends State<Create_lecture> {
     try {
       for (var file in _selectedFiles) {
         final fileName = file.path.split('/').last;
-        final ref = FirebaseStorage.instance
-            .ref()
-            .child('study_materials/$teachername/$fileName');
-        final uploadTask = ref.putFile(file);
+        if (['.mp3', '.wav', '.m4a'].any((ext) => fileName.endsWith(ext))) {
+          final ref = FirebaseStorage.instance
+              .ref()
+              .child('study_materials/$teachername/$fileName');
+          final uploadTask = ref.putFile(file);
 
-        final snapshot = await uploadTask;
-        final downloadUrl = await snapshot.ref.getDownloadURL();
-        downloadUrls.add(downloadUrl);
+          // Wait for the upload to complete and get the URL
+          final snapshot = await uploadTask;
+          final downloadUrl = await snapshot.ref.getDownloadURL();
+          downloadUrls.add(downloadUrl);
+        } else {
+          print("Unsupported file format for $fileName");
+        }
       }
     } catch (e) {
       print("Error uploading files: $e");
@@ -73,17 +79,17 @@ class _Create_LectureState extends State<Create_lecture> {
     });
 
     final teacherId = FirebaseAuth.instance.currentUser?.uid;
-    final audioUrls = await _uploadFilesToFirebase();
+    final audioUrls = await _uploadFilesToFirebase(); // Upload all files
 
     final docRef =
-        FirebaseFirestore.instance.collection('Study_material').doc();
+    FirebaseFirestore.instance.collection('Study_material').doc();
     await docRef.set({
       'TopicName': assignmentProvider.assignmentName,
       'ClassSelected': assignmentProvider.selectedClass,
       'SubjectSelected': assignmentProvider.selectedSubject,
       'TopicDescription': assignmentProvider.instructions,
       'TeacherId': teacherId,
-      'AudioFiles': audioUrls,
+      'AudioFiles': audioUrls, // Save all audio URLs as an array
       'CreatedAt': FieldValue.serverTimestamp(),
       'Status': assignmentProvider.status,
     });
@@ -314,6 +320,7 @@ class _Create_LectureState extends State<Create_lecture> {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 46),
                     Center(
                       child: ElevatedButton(
@@ -335,7 +342,7 @@ class _Create_LectureState extends State<Create_lecture> {
                           style: GoogleFonts.poppins(
                             fontSize: 18,
                             fontWeight: FontWeight.w400,
-                            color: const Color(0xFF1E7ED2),
+                            color: const Color(0xFFFFFFFF),
                           ),
                         ),
                       ),
